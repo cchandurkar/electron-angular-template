@@ -1,0 +1,39 @@
+{
+  "name": "quicknotes",
+  "productName": "Quick Notes",
+  "version": "1.0.0",
+  "description": "Offline first notes manager",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "start": "npm-run-all -p app:serve electron:serve",
+    "app:serve": "(cd src/renderer && npm start)",
+    "app:build": "(cd src/renderer && npm run build)",
+    "electron:start": "electron .",
+    "electron:serve": "wait-on tcp:4200 && npm-run-all -p electron:serve-tsc electron:serve-app",
+    "electron:serve-tsc": "tsc -w -p tsconfig.electron.json",
+    "electron:serve-app": "wait-on dist/main/index.js && electron . --serve",
+    "postinstall": "electron-rebuild && electron-builder install-app-deps && (cd app && npm install)",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chaitanya Chandurkar",
+  "license": "MIT",
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.1",
+    "electron": "^32.0.1",
+    "electron-log": "^5.1.7",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@electron/rebuild": "^3.6.0",
+    "@types/electron": "^1.4.38",
+    "@types/node": "^22.5.1",
+    "@types/yargs": "^17.0.33",
+    "electron-builder": "^24.13.3",
+    "electron-reload": "^2.0.0-alpha.1",
+    "npm-run-all": "^4.1.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "wait-on": "^8.0.0"
+  }
+}

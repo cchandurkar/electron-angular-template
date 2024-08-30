@@ -1,0 +1,23 @@
+
+.nav.nav-tabs {
+  .nav-item {
+    button {
+      border-radius: 0;
+      i.bi {
+        margin-left: 5px;
+        visibility: hidden;
+      }
+      i.bi:hover {
+        color: red;
+      }
+    }
+    button:hover {
+      i.bi {
+        visibility: visible;
+      }
+    }
+    button:hover:not(.active) {
+      border-color: transparent;
+    }
+  }
+}

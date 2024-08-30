@@ -1,0 +1,21 @@
+/* You can add global styles to this file, and also import other style files */
+@use './app/_styles/fonts';
+@use './app/_styles/_common/tabs';
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+.unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  @extend .spline-sans-regular;
+  color: #111;
+}
