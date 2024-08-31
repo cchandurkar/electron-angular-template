@@ -9,7 +9,7 @@ import { getLogger } from './logger'
 // If serving, use hot reload
 const logger = getLogger("main");
 if(isServing){
-    let electronPath = path.join(app.getAppPath(), './node_modules', '.bin', 'electron.cmd');
+    let electronPath = path.join(app.getAppPath(), './node_modules', '.bin', 'electron');
     logger.info("electronPath", electronPath);
     electronReload(app.getAppPath(), {
         electron: electronPath,
