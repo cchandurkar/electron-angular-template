@@ -18,8 +18,8 @@
   "author": "Chaitanya Chandurkar",
   "license": "MIT",
   "dependencies": {
-    "@electron-toolkit/preload": "^3.0.1",
-    "electron": "^32.0.1",
+    "@electron-toolkit/preload": "^3.0.2",
+    "electron": "^36.7.3",
     "electron-log": "^5.1.7",
     "yargs": "^17.7.2"
   },
