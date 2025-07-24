@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -7,17 +7,11 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent {
   title = 'renderer';
   tabActive = 1;
 
   constructor(){
   }
 
-  ngOnInit(): void {
-
-  }
-
-  ngOnDestroy(): void {
-  }
 }

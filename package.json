@@ -13,7 +13,8 @@
     "electron:serve-tsc": "tsc -w -p tsconfig.electron.json",
     "electron:serve-app": "wait-on dist/main/index.js && electron . --serve",
     "postinstall": "electron-rebuild && electron-builder install-app-deps && (cd src/renderer && npm install)",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "(cd src/renderer && npm run lint)"
   },
   "author": "Chaitanya Chandurkar",
   "license": "MIT",
