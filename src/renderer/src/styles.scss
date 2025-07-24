@@ -3,7 +3,7 @@
 @use './app/_styles/_common/tabs';
 
 /* Importing Bootstrap SCSS file. */
-@import 'bootstrap/scss/bootstrap';
+@use 'bootstrap/scss/bootstrap';
 
 .unselectable {
   -webkit-user-select: none !important;

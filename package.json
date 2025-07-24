@@ -12,7 +12,7 @@
     "electron:serve": "wait-on tcp:4200 && npm-run-all -p electron:serve-tsc electron:serve-app",
     "electron:serve-tsc": "tsc -w -p tsconfig.electron.json",
     "electron:serve-app": "wait-on dist/main/index.js && electron . --serve",
-    "postinstall": "electron-rebuild && electron-builder install-app-deps && (cd app && npm install)",
+    "postinstall": "electron-rebuild && electron-builder install-app-deps && (cd src/renderer && npm install)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Chaitanya Chandurkar",
