@@ -18,6 +18,8 @@ export class ElectronService {
   }
 
   setupElectronIpc(): void {
+    if(!window.electronApi) return;
+
     window.electronApi.on('dialog:openFile', (filePath: string) => {
       console.log('File opened:', filePath);
     });

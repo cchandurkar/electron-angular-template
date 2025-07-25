@@ -19,8 +19,7 @@
     "lint:electron": "eslint --ext .ts,.js src/main src/preload",
     "lint:renderer": "(cd src/renderer && npm run lint)",
     "lint:electron:fix": "eslint --ext .ts,.js src/main src/preload --fix",
-    "lint:renderer:fix": "(cd src/renderer && npm run lint:fix)",
-    "gen:types": "tsc -p tsconfig.types.json"
+    "lint:renderer:fix": "(cd src/renderer && npm run lint:fix)"
   },
   "author": "Chaitanya Chandurkar",
   "license": "MIT",
@@ -39,12 +38,20 @@
     "@types/electron": "^1.4.38",
     "@types/node": "^22.5.1",
     "@types/yargs": "^17.0.33",
-    "electron-builder": "^24.13.3",
+    "electron-builder": "26.0.12",
     "electron-reload": "^2.0.0-alpha.1",
     "eslint": "^9.29.0",
     "npm-run-all": "^4.1.5",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "typescript": "5.8.3",
     "wait-on": "^8.0.0"
-  }
+  },
+  "engines": {
+    "node": ">= 22.12.0 <= 24.0.0",
+    "typescript": ">= 5.8.0 < 5.9.0"
+  },
+  "browserslist": [
+    "chrome 136"
+  ]
 }
