@@ -3,8 +3,8 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 // Parse Args
-let args = yargs(hideBin(process.argv)).argv;
-export const isServing = 'serve' in args;
+const args = yargs(hideBin(process.argv)).argv;
+export const serve = 'serve' in args;
 
 // Platform
 export const platform = process.platform;

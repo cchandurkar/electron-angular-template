@@ -1,1 +1,1 @@
-# QuickNotes
+# Template

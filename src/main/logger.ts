@@ -3,7 +3,7 @@ import { MainLogger, LogFunctions } from 'electron-log/src';
 
 // Hold a global logger instance
 // No need to recreate multiple instances
-let loggers: {[key: string]: MainLogger} = { }
+const loggers: {[key: string]: MainLogger} = { }
 
 /**
  * Creates a logger for module
@@ -17,8 +17,8 @@ const getOrCreateLogger = (logId: string): MainLogger => {
     }
 
     // Instance. Max File = 4MB
-    let logger = Logger.create( { logId } );
-    let maxFileSize = 4 * 1e+6;
+    const logger = Logger.create( { logId } );
+    const maxFileSize = 4 * 1e+6;
 
     // File transform config
     logger.transports.file.level = 'silly';

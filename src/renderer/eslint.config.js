@@ -1,7 +1,7 @@
 // @ts-check
-const eslint = require("@eslint/js");
-const tseslint = require("typescript-eslint");
-const angular = require("angular-eslint");
+const eslint = require('@eslint/js');
+const tseslint = require('typescript-eslint');
+const angular = require('angular-eslint');
 
 module.exports = tseslint.config(
   {
@@ -15,6 +15,7 @@ module.exports = tseslint.config(
     processor: angular.processInlineTemplates,
     rules: {
       "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/triple-slash-reference": "off",
       "@angular-eslint/directive-selector": [
         "error",
         {

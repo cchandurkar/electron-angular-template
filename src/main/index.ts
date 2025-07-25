@@ -2,15 +2,15 @@ import { app, BrowserWindow } from 'electron';
 import electronReload from 'electron-reload';
 import path from 'path';
 
-import { createWindow } from './window';
-import { isServing } from './config';
-import { getLogger } from './logger'
+import { createWindow } from './window.js';
+import { serve } from './config.js';
+import { getLogger } from './logger.js'
+import { setupIpcHandlers } from './ipc.js';
 
 // If serving, use hot reload
 const logger = getLogger("main");
-if(isServing){
-    let electronPath = path.join(app.getAppPath(), './node_modules', '.bin', 'electron');
-    logger.info("electronPath", electronPath);
+if(serve){
+    const electronPath = path.join(app.getAppPath(), './node_modules', '.bin', 'electron');
     electronReload(app.getAppPath(), {
         electron: electronPath,
         hardResetMethod: "exit",
@@ -19,14 +19,15 @@ if(isServing){
 }
 
 // TODO: Show "Report Crash" dialog
-const handleCrash = (err: any) => {
+const handleCrash = (err: Error) => {
     logger.error(err);
 };
 
 // Create window on electron initialization
 app.whenReady()
-    .then( createWindow )
-    .catch( handleCrash );
+    .then(setupIpcHandlers)    
+    .then(createWindow)
+    .catch(handleCrash);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -38,11 +39,6 @@ app.on('window-all-closed', () => {
 // Restore
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow().catch( handleCrash );
+        createWindow();
     }
 });
-
-
-// -----------------------------------
-// IPC calls
-// -----------------------------------
