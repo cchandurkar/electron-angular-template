@@ -20,6 +20,8 @@ export const createWindow = (): BrowserWindow => {
         width: 800,
         height: 600,
         show: false,
+        frame: false,
+        titleBarStyle: 'hidden',
         webPreferences: {
             nodeIntegration: true,
             allowRunningInsecureContent: serve,

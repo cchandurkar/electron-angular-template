@@ -1,9 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
-@use './app/_styles/fonts';
+@use './app/_styles/_fonts';
 @use './app/_styles/_common/tabs';
 
 /* Importing Bootstrap SCSS file. */
 @use 'bootstrap/scss/bootstrap';
+
 
 .unselectable {
   -webkit-user-select: none !important;

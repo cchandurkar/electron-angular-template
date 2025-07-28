@@ -3,28 +3,33 @@ import { ipcMain, dialog, BrowserWindow } from 'electron/main';
 export const setupIpcHandlers = () => {
 
   // Handle window events
-  ipcMain.handle('window:close', () => {
+  ipcMain.on('window:close', () => {
     const win = BrowserWindow.getFocusedWindow();
     if (win) {
       win.close();
     }
   });
 
-  ipcMain.handle('window:minimize', () => {
+  ipcMain.on('window:minimize', () => {
     const win = BrowserWindow.getFocusedWindow();
     if (win) {
+      console.log('Minimizing window');
       win.minimize();
     }
   });
 
-  ipcMain.handle('window:maximize', () => {
+  ipcMain.on('window:maximize', () => {
     const win = BrowserWindow.getFocusedWindow();
     if (win) {
-      win.maximize();
+      if(win.isMaximized()) {
+        win.unmaximize();
+      } else{
+        win.maximize();
+      }
     }
   });
 
-  ipcMain.handle('window:versions', () => {
+  ipcMain.on('window:versions', () => {
     return {
       ...process.versions
     };
