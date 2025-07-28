@@ -16,6 +16,7 @@ export class HomeComponent {
  
   versions: Record<string, string | undefined> = {};
   
+  title = 'Electron Angular Template';
   text = '';
 
   constructor() {

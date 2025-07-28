@@ -1,10 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @use './app/_styles/_fonts';
-@use './app/_styles/_common/tabs';
 
 /* Importing Bootstrap SCSS file. */
 @use 'bootstrap/scss/bootstrap';
-
 
 .unselectable {
   -webkit-user-select: none !important;
@@ -18,5 +16,28 @@ html, body {
   padding: 0;
   height: 100%;
   @extend .spline-sans-regular;
-  color: #111;
+  color: #222;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  // background: transparent; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3); 
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);; 
 }
