@@ -24,14 +24,17 @@ export class HomeComponent {
   }
 
   minimizeWindow() {
+    if (!this.electron.isElectron) return;
     window.electronApi.windowMinimize();
   }
 
   closeWindow() {
+    if (!this.electron.isElectron) return;
     window.electronApi.windowClose();
   }
 
   toggleMaximizeWindow() {
+    if (!this.electron.isElectron) return;
     window.electronApi.windowToggleMaximize();
   }
 
