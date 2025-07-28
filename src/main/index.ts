@@ -2,14 +2,12 @@ import { app, BrowserWindow } from 'electron';;
 
 import { createWindow } from './window.js';
 import { serve } from './config.js';
-import { getLogger } from './logging/index.js'
+import logger from './logger.js'
 import { setupIpcHandlers } from './ipc.js';
+import path from 'path';
 
-// If serving, use hot reload
-const logger = getLogger("main");
 if(serve){
     import('electron-debug').then(debug => debug.default({isEnabled: true, showDevTools: true}));
-    import('electron-reloader').then(reloader => reloader.default(module));
 }
 
 // TODO: Show "Report Crash" dialog
@@ -25,7 +23,7 @@ app.whenReady()
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-    if ( process.platform !== 'darwin' ) {
+    if (process.platform !== 'darwin') {
         app.quit()
     }
 });
@@ -36,3 +34,15 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+// Setup hot reload
+if (serve) {
+    const paths = ['src/main', 'src/preload'];
+    import('chokidar').then(chokidar => {
+        const absPaths = paths.map(p => path.join(app.getAppPath(), p));
+        chokidar.watch(absPaths, { persistent: true, interval: 0}).on('change', (path) => {
+            console.info(`File changed: ${path}`);
+            app.relaunch();
+        });
+    });
+}

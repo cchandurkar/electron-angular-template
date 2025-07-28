@@ -2,9 +2,7 @@ import { BrowserWindow, shell, app } from 'electron';
 import path from 'path';
 
 import { serve } from './config.js';
-import { getLogger } from './logging/index.js';
-
-const logger = getLogger('main').child({scope: 'window'});
+import logger from './logger.js';
 
 /**
  * Creates a browser window. If launched with `--serve` flag, it will enable hot reload and load the
@@ -12,10 +10,10 @@ const logger = getLogger('main').child({scope: 'window'});
  */
 export const createWindow = (): BrowserWindow => {
 
-    // dist URL
-    const serveURL = `http://localhost:4200`;
-    const distURL = `./dist/renderer/browser/index.html`;
-    const preloadPath = path.join(app.getAppPath(), 'dist/preload/index.js');
+    // URLs for development and production
+    const serveURL = 'http://localhost:4200';
+    const distURL = 'dist/renderer/browser/index.html';
+    const preloadPath = 'dist/preload/index.js';
 
     // Create the browser window
     let win: BrowserWindow = new BrowserWindow({
@@ -26,8 +24,7 @@ export const createWindow = (): BrowserWindow => {
             nodeIntegration: true,
             allowRunningInsecureContent: serve,
             contextIsolation: true,
-            preload: preloadPath,
-            sandbox: false
+            preload: path.join(app.getAppPath(), preloadPath)
         }
     });
 
