@@ -44,10 +44,12 @@ export const api = {
 // just add to the DOM global.
 if (process.contextIsolated) {
   try {
-    contextBridge.exposeInMainWorld('electronApi', api)
+    contextBridge.exposeInMainWorld('electronApi', api);
+    contextBridge.exposeInMainWorld('process', process);
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 } else {
   window.electronApi = api
+  window.process = process;
 }

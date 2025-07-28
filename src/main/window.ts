@@ -1,12 +1,10 @@
 import { BrowserWindow, shell, app } from 'electron';
-import url from 'url';
 import path from 'path';
 
 import { serve } from './config.js';
-import { getLogger } from './logger.js';
+import { getLogger } from './logging/index.js';
 
-
-const logger = getLogger('main');
+const logger = getLogger('main').child({scope: 'window'});
 
 /**
  * Creates a browser window. If launched with `--serve` flag, it will enable hot reload and load the
@@ -14,43 +12,34 @@ const logger = getLogger('main');
  */
 export const createWindow = (): BrowserWindow => {
 
-    logger.log("App Path", app.getAppPath());
-
     // dist URL
     const serveURL = `http://localhost:4200`;
-    const distURL = url.format({
-      pathname: path.join(app.getAppPath(), `./dist/renderer/index.html`),
-      protocol: 'file:',
-      slashes: true
-    });
+    const distURL = `./dist/renderer/browser/index.html`;
+    const preloadPath = path.join(app.getAppPath(), 'dist/preload/index.js');
 
     // Create the browser window
-    const preloadPath = path.join(app.getAppPath(), 'dist/preload/index.js');
-    const win: BrowserWindow = new BrowserWindow({
+    let win: BrowserWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        frame: true,
-        trafficLightPosition: { x: 12, y: 10 },
         show: false,
         webPreferences: {
+            nodeIntegration: true,
+            allowRunningInsecureContent: serve,
+            contextIsolation: true,
             preload: preloadPath,
             sandbox: false
         }
     });
 
     if(serve) {
-        import('electron-debug').then(debug => debug.default({isEnabled: true, showDevTools: true}));
-        import('electron-reloader').then(reloader => reloader.default(module));
-        win.loadURL(serveURL)
+        win.loadURL(serveURL);
     } else {
-        win.loadFile(distURL)
+        win.loadFile(distURL);
     }
 
-    // Load app in window
-    // win.loadURL( isServing ? serveURL: distURL );
-    win.once('ready-to-show', () => { win.show(); });
+    win.once('ready-to-show', () => win.show());
 
-    // Open in external browser
+    // Open hyperlinks in external browser
     const wc = win.webContents;
     wc.on('will-navigate', (e, url) => {
         if (url != wc.getURL()) {
@@ -59,7 +48,11 @@ export const createWindow = (): BrowserWindow => {
         }
     });
 
-    // Return the window
+    // Emitted when the window is closed.
+    win.on('closed', () => {
+        win = null;
+    });
+
     return win;
 
 }

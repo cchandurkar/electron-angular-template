@@ -17,6 +17,17 @@ export class ElectronService {
     }
   }
 
+  versions(): Record<string, string | undefined> {
+    return this.isElectron ?
+      window.electronApi.windowVersions():
+      {}
+  }
+
+  /**
+   * Sets up Electron IPC (Inter-Process Communication) listeners.
+   * 
+   * @returns void
+   */
   setupElectronIpc(): void {
     if(!window.electronApi) return;
 
@@ -25,7 +36,13 @@ export class ElectronService {
     });
   }
 
+  /**
+   * Checks if the application is running in an Electron environment.
+   * 
+   * @returns boolean - true if running in Electron, false otherwise
+   */
   get isElectron(): boolean {
     return !!(window && window.process && window.process.type);
   }
+  
 }

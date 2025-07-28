@@ -1,21 +1,15 @@
-import { app, BrowserWindow } from 'electron';
-import electronReload from 'electron-reload';
-import path from 'path';
+import { app, BrowserWindow } from 'electron';;
 
 import { createWindow } from './window.js';
 import { serve } from './config.js';
-import { getLogger } from './logger.js'
+import { getLogger } from './logging/index.js'
 import { setupIpcHandlers } from './ipc.js';
 
 // If serving, use hot reload
 const logger = getLogger("main");
 if(serve){
-    const electronPath = path.join(app.getAppPath(), './node_modules', '.bin', 'electron');
-    electronReload(app.getAppPath(), {
-        electron: electronPath,
-        hardResetMethod: "exit",
-        appArgv: process.argv as [string]
-    });
+    import('electron-debug').then(debug => debug.default({isEnabled: true, showDevTools: true}));
+    import('electron-reloader').then(reloader => reloader.default(module));
 }
 
 // TODO: Show "Report Crash" dialog

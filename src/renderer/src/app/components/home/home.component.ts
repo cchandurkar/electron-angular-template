@@ -1,13 +1,22 @@
-import { Component } from '@angular/core';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, inject } from '@angular/core';
+
+import { ElectronService } from '../../services/electron/electron.service';
 
 @Component({
   selector: 'app-home',
-  imports: [NgbNavModule],
+  imports: [],
+  providers: [ElectronService],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  title = 'Home';
-  tabActive = 1;
+
+  private electron = inject(ElectronService);
+ 
+  versions: Record<string, string | undefined> = {};
+
+  constructor() {
+    this.versions = this.electron.versions();
+  }
+
 }

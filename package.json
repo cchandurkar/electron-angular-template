@@ -29,6 +29,8 @@
     "electron-debug": "^4.1.0",
     "electron-log": "^5.1.7",
     "electron-reloader": "^1.2.3",
+    "winston": "3.17.0",
+    "winston-daily-rotate-file": "5.0.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
