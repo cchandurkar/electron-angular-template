@@ -5,7 +5,7 @@ div.note-container {
 }
 
 textarea {
-  padding: 5px 12px;
+  padding: 10px 12px;
   margin: 0;
   flex: 1;
   resize: none;
@@ -14,6 +14,11 @@ textarea {
   box-shadow: none;
   background: none;
   border: none;
+  &::placeholder {
+    color: #bdb76b;
+    opacity: 1;
+    font-style: italic;
+  }
 }
 
 textarea:focus {
@@ -21,29 +26,4 @@ textarea:focus {
   box-shadow: none;
   background: none;
   border: none;
-}
-
-.title-bar {
-  display: flex;
-  flex-direction: row;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 5px 12px;
-}
-
-.title-bar .title {
-  flex: 1;
-  font-size: 16px;
-  font-weight: bold;
-  -webkit-app-region: drag;
-}
-
-.title-bar .title-bar-buttons {
-  display: flex;
-  flex-direction: row;
-}
-
-.title-bar .title-bar-buttons span.btn {
-  padding: 0;
-  margin: 0px 5px;
-  cursor: pointer !important;
 }

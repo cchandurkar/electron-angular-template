@@ -1,0 +1,35 @@
+<div class="title-bar">
+  <span class="title">{{title}}</span>
+  <div class="title-bar-buttons">
+    <span
+      class="btn btn-minimize"
+      tabindex="0"
+      role="button"
+      (click)="minimizeWindow()"
+      (keydown.enter)="minimizeWindow()"
+      (keydown.space)="minimizeWindow()"
+    >
+      <i class="bi bi-dash-lg"></i>
+    </span>
+    <span
+      class="btn btn-maximize"
+      tabindex="0"
+      role="button"
+      (click)="toggleMaximizeWindow()"
+      (keydown.enter)="toggleMaximizeWindow()"
+      (keydown.space)="toggleMaximizeWindow()"
+    >
+      <i class="bi bi-square"></i>
+    </span>
+    <span
+      class="btn btn-quit"
+      tabindex="0"
+      role="button"
+      (click)="closeWindow()"
+      (keydown.enter)="closeWindow()"
+      (keydown.space)="closeWindow()"
+    >
+      <i class="bi bi-x-lg"></i>
+    </span>
+  </div>
+</div>

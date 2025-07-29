@@ -4,6 +4,8 @@
 /* Importing Bootstrap SCSS file. */
 @use 'bootstrap/scss/bootstrap';
 
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Indie+Flower&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Spline+Sans:wght@300..700&display=swap');
+
 .unselectable {
   -webkit-user-select: none !important;
   -moz-user-select: none !important;

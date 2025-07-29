@@ -1,41 +1,49 @@
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms'
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, FormControl  } from '@angular/forms'
 
 import { ElectronService } from '../../services/electron/electron.service';
+import { Note } from '@shared/models/note';
+
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { HeaderComponent } from "../_shared/header/header.component";
+import { FooterComponent } from "../_shared/footer/footer.component";
 
 @Component({
   selector: 'app-home',
-  imports: [FormsModule],
+  imports: [FormsModule, ReactiveFormsModule, HeaderComponent, FooterComponent],
   providers: [ElectronService],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
 
-  private electron = inject(ElectronService);
- 
-  versions: Record<string, string | undefined> = {};
-  
+  note: Note = new Note('');
+
+  textareaControl = new FormControl(this.note.content);
+
   title = 'Electron Angular Template';
-  text = '';
 
   constructor() {
-    this.versions = this.electron.versions();
   }
 
-  minimizeWindow() {
-    if (!this.electron.isElectron) return;
-    window.electronApi.windowMinimize();
+  // -----------------------------------------
+  // Lifecycle hooks
+  // -----------------------------------------
+
+  ngOnInit(): void {
+    this.textareaControl.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(content => {
+        console.log('Content changed');
+        this.note.setContent(content);
+      });
   }
 
-  closeWindow() {
-    if (!this.electron.isElectron) return;
-    window.electronApi.windowClose();
-  }
-
-  toggleMaximizeWindow() {
-    if (!this.electron.isElectron) return;
-    window.electronApi.windowToggleMaximize();
+  ngOnDestroy(): void {
+    console.log('HomeComponent destroyed');
   }
 
 }

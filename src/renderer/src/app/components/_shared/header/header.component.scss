@@ -1,0 +1,38 @@
+@use '../../../_styles/fonts';
+
+.title-bar {
+  display: flex;
+  flex-direction: row;
+  background: rgba(0, 0, 0, 0.2);
+  color: black;
+  align-items: center;
+}
+
+.title-bar .title {
+  flex: 1;
+  font-size: 16px;
+  -webkit-app-region: drag;
+  padding: 5px 15px;
+  @extend .roboto-mono-bold;
+}
+
+.title-bar .title-bar-buttons {
+  display: flex;
+  flex-direction: row;
+}
+
+.title-bar .title-bar-buttons span.btn {
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 0;
+  cursor: pointer !important;
+}
+
+.title-bar .title-bar-buttons span.btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.title-bar .title-bar-buttons span.btn.btn-quit:hover {
+  background: red;
+  color: white;
+}
