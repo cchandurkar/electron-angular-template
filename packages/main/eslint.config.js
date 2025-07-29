@@ -3,7 +3,7 @@ import tseslint from '@electron-toolkit/eslint-config-ts';
 const cfg = tseslint.config(
   {
     files: [
-      "src/main/**/*.ts",
+      "src/**/*.ts",
       "src/preload/**/*.ts",
     ],
     extends: [

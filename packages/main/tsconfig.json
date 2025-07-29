@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "../../dist/main",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -17,19 +17,16 @@
       "es2016",
       "es2015",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@shared/*": [
+        "../shared/src/*"
+      ]
+    }
   },
   "files": [
-    "src/main/index.ts",
+    "src/index.ts",
     "src/preload/index.ts",
     "src/preload/index.d.ts"
   ],
-  "include": [
-    "src/main/**/*.ts",
-    "src/preload/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
 }

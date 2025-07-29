@@ -1,61 +1,38 @@
 {
   "name": "electron-angular-template",
-  "productName": "Electron Angular Template",
   "version": "1.0.0",
-  "description": "A template for building modern Electron apps with Angular",
-  "main": "dist/main/index.js",
+  "description": "",
+  "homepage": "https://github.com/cchandurkar/electron-angular-template#readme",
+  "bugs": {
+    "url": "https://github.com/cchandurkar/electron-angular-template/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cchandurkar/electron-angular-template.git"
+  },
   "scripts": {
+    "build": "npm-run-all -p app:build electron:build",
+    "app:build": "(cd packages/renderer && npm run build)",
+    "electron:build": "wait-on dist/main/index.js && electron-builder --publish never",
     "start": "npm-run-all -p app:serve electron:serve",
-    "app:serve": "(cd src/renderer && npm start)",
-    "app:build": "(cd src/renderer && npm run build)",
-    "electron:start": "electron .",
-    "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
-    "electron:serve-tsc": "tsc -p tsconfig.json",
-    "electron:serve-app": "wait-on dist/main/index.js && electron . --serve",
-    "postinstall": "electron-rebuild && electron-builder install-app-deps && (cd src/renderer && npm install)",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npm-run-all -p lint:electron lint:renderer",
-    "lint:fix": "npm-run-all -p lint:electron:fix lint:renderer:fix",
-    "lint:electron": "eslint --ext .ts,.js src/main src/preload",
-    "lint:renderer": "(cd src/renderer && npm run lint)",
-    "lint:electron:fix": "eslint --ext .ts,.js src/main src/preload --fix",
-    "lint:renderer:fix": "(cd src/renderer && npm run lint:fix)"
+    "app:serve": "(cd packages/renderer && npm start)",
+    "electron:serve": "(cd packages/main && npm run serve)",
+    "electron:start": "(cd packages/main && npm start)",
+    "postinstall": "(cd packages/shared && npm install) && (cd packages/main && npm install) && (cd packages/renderer && npm install)"
   },
-  "author": "Chaitanya Chandurkar",
   "license": "MIT",
-  "dependencies": {
-    "@electron-toolkit/preload": "^3.0.2",
-    "bootstrap-icons": "1.13.1",
-    "electron": "^36.7.3",
-    "electron-debug": "^4.1.0",
-    "electron-log": "^5.1.7",
-    "electron-reloader": "^1.2.3",
-    "winston": "3.17.0",
-    "winston-daily-rotate-file": "5.0.0",
-    "yargs": "^17.7.2"
-  },
-  "devDependencies": {
-    "@electron-toolkit/eslint-config-ts": "^3.1.0",
-    "@electron-toolkit/tsconfig": "^1.0.1",
-    "@electron/rebuild": "^3.6.0",
-    "@types/electron": "^1.4.38",
-    "@types/node": "^22.5.1",
-    "@types/yargs": "^17.0.33",
-    "chokidar": "4.0.3",
-    "electron-builder": "26.0.12",
-    "electron-reload": "^2.0.0-alpha.1",
-    "eslint": "^9.29.0",
-    "npm-run-all": "^4.1.5",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "5.8.3",
-    "wait-on": "^8.0.0"
-  },
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "workspaces": [
+    "packages/renderer",
+    "packages/main",
+    "packages/shared"
+  ],
   "engines": {
     "node": ">= 22.12.0 <= 24.0.0",
-    "typescript": ">= 5.8.0 < 5.9.0"
+    "npm": ">= 9.6.0"
   },
-  "browserslist": [
-    "chrome 136"
-  ]
+  "dependencies": {},
+  "devDependencies": {}
 }

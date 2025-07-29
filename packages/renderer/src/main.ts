@@ -1,5 +1,5 @@
 /// <reference types="@angular/localize" />
-/// <reference path="../../preload/index.d.ts" />
+/// <reference path="../../main/src/preload/index.d.ts" />
 
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
