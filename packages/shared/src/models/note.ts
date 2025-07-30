@@ -1,8 +1,7 @@
 export class Note {
-
   public id: string;
   public content: string | null;
-  public createdAt: Date
+  public createdAt: Date;
   public updatedAt: Date;
 
   constructor(content: string) {
@@ -16,5 +15,4 @@ export class Note {
     this.content = content;
     this.updatedAt = new Date();
   }
-
 }

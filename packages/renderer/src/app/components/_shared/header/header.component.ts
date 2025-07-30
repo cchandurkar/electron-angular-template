@@ -8,7 +8,6 @@ import { ElectronService } from '../../../services/electron/electron.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-
   @Input() title = 'note.txt';
 
   private electron = inject(ElectronService);
@@ -27,5 +26,4 @@ export class HeaderComponent {
     if (!this.electron.isElectron) return;
     window.electronApi.windowToggleMaximize();
   }
-
 }

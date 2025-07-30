@@ -1,7 +1,8 @@
-import { api } from './index.js';
+import { api } from '../index';
 
 declare global {
   interface Window {
     electronApi: typeof api;
+    process: NodeJS.Process;
   }
 }

@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ElectronService {
-
   /**
    * This service provides a way to access Electron APIs in an Angular application.
    * It checks if the application is running in an Electron environment and exposes
@@ -18,18 +17,16 @@ export class ElectronService {
   }
 
   versions(): Record<string, string | undefined> {
-    return this.isElectron ?
-      window.electronApi.windowVersions():
-      {}
+    return this.isElectron ? window.electronApi.windowVersions() : {};
   }
 
   /**
    * Sets up Electron IPC (Inter-Process Communication) listeners.
-   * 
+   *
    * @returns void
    */
   setupElectronIpc(): void {
-    if(!window.electronApi) return;
+    if (!window.electronApi) return;
 
     window.electronApi.on('dialog:openFile', (filePath: string) => {
       console.log('File opened:', filePath);
@@ -38,11 +35,10 @@ export class ElectronService {
 
   /**
    * Checks if the application is running in an Electron environment.
-   * 
+   *
    * @returns boolean - true if running in Electron, false otherwise
    */
   get isElectron(): boolean {
     return !!(window && window.process && window.process.type);
   }
-  
 }

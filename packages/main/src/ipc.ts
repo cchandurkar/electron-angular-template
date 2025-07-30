@@ -1,7 +1,6 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron/main';
 
 export const setupIpcHandlers = () => {
-
   // Handle window events
   ipcMain.on('window:close', () => {
     const win = BrowserWindow.getFocusedWindow();
@@ -21,9 +20,9 @@ export const setupIpcHandlers = () => {
   ipcMain.on('window:maximize', () => {
     const win = BrowserWindow.getFocusedWindow();
     if (win) {
-      if(win.isMaximized()) {
+      if (win.isMaximized()) {
         win.unmaximize();
-      } else{
+      } else {
         win.maximize();
       }
     }
@@ -39,8 +38,7 @@ export const setupIpcHandlers = () => {
   ipcMain.handle('dialog:openFile', async () => {
     const { canceled, filePaths } = await dialog.showOpenDialog({});
     if (!canceled) {
-      return filePaths[0]
+      return filePaths[0];
     }
   });
-
 };

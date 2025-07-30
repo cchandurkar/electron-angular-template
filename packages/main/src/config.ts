@@ -8,4 +8,4 @@ export const serve = 'serve' in args;
 
 // Platform
 export const platform = process.platform;
-export const isMac = platform === 'darwin'
+export const isMac = platform === 'darwin';

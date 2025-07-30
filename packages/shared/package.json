@@ -1,12 +1,31 @@
 {
-  "name": "shared",
+  "name": "@local/shared",
   "version": "1.0.0",
   "description": "Utility functions and models shared between main and renderer",
   "license": "MIT",
   "author": "Chaitanya Chandurkar",
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p tsconfig.json --outDir ../main/dist/shared"
+    "build": "tsc -p tsconfig.json --outDir ./dist",
+    "serve": "tsc -p tsconfig.json --watch",
+    "clean": "rimraf dist",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1"
   }
 }

@@ -1,5 +1,3 @@
-@use '../../../_styles/fonts';
-
 .title-bar {
   display: flex;
   flex-direction: row;
@@ -13,7 +11,8 @@
   font-size: 16px;
   -webkit-app-region: drag;
   padding: 5px 15px;
-  @extend .roboto-mono-bold;
+  font-weight: bold;
+  font-family: 'Roboto Mono', monospace;
 }
 
 .title-bar .title-bar-buttons {

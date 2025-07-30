@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, FormControl  } from '@angular/forms'
+import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 
 import { ElectronService } from '../../services/electron/electron.service';
-import { Note } from '@shared/models/note';
+import { Note } from '../../models/note';
 
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { HeaderComponent } from "../_shared/header/header.component";
-import { FooterComponent } from "../_shared/footer/footer.component";
+import { HeaderComponent } from '../_shared/header/header.component';
+import { FooterComponent } from '../_shared/footer/footer.component';
 
 @Component({
   selector: 'app-home',
@@ -16,15 +16,13 @@ import { FooterComponent } from "../_shared/footer/footer.component";
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit, OnDestroy {
-
   note: Note = new Note('');
 
   textareaControl = new FormControl(this.note.content);
 
   title = 'Electron Angular Template';
 
-  constructor() {
-  }
+  constructor() {}
 
   // -----------------------------------------
   // Lifecycle hooks
@@ -32,10 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.textareaControl.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
-      )
+      .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(content => {
         console.log('Content changed');
         this.note.setContent(content);
@@ -45,5 +40,4 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     console.log('HomeComponent destroyed');
   }
-
 }
