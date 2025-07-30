@@ -12,8 +12,8 @@ export const createWindow = (): BrowserWindow => {
 
     // URLs for development and production
     const serveURL = 'http://localhost:4200';
-    const distURL = '../../dist/renderer/browser/index.html';
-    const preloadPath = '../../dist/main/preload/index.js';
+    const distURL = './dist/renderer/browser/index.html';
+    const preloadPath = './dist/main/preload/index.js';
 
     // Create the browser window
     let win: BrowserWindow = new BrowserWindow({

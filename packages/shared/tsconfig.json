@@ -19,15 +19,8 @@
       "es2015",
       "dom"
     ],
-    "paths": {
-      "@shared/*": [
-        "../shared/src/*"
-      ]
-    }
   },
-  "files": [
-    "src/index.ts",
-    "src/preload/index.ts",
-    "src/preload/index.d.ts"
+  "include": [
+    "src/**/*.ts",
   ],
 }

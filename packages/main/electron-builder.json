@@ -1,0 +1,44 @@
+{
+    "appId": "me.cchandurkar.electron-angular-template",
+    "productName": "Electron Angular Template",
+    "directories": {
+      "output": "../../build/"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "cchandurkar",
+        "repo": "electron-angular-template"
+      }
+    ],
+    "artifactName": "${productName}-v${version}.${ext}",
+    "forceCodeSigning": false,
+    "npmRebuild": false,
+    "files": [
+      "./dist/**/*",
+      "./package.json",
+      "./node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "artifactName": "${productName}-v${version}-Setup.${ext}"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "hardenedRuntime" : true,
+      "gatekeeperAssess": false,
+      "target": [
+        "dmg"
+      ]
+    }
+  }

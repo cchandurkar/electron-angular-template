@@ -4,7 +4,9 @@
   "description": "Utility functions and models shared between main and renderer",
   "license": "MIT",
   "author": "Chaitanya Chandurkar",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p tsconfig.json --outDir ../main/dist/shared"
   }
 }

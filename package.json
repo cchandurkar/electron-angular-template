@@ -11,26 +11,24 @@
     "url": "git+https://github.com/cchandurkar/electron-angular-template.git"
   },
   "scripts": {
-    "build": "npm-run-all -p app:build electron:build",
-    "app:build": "(cd packages/renderer && npm run build)",
-    "electron:build": "wait-on dist/main/index.js && electron-builder --publish never",
     "start": "npm-run-all -p app:serve electron:serve",
+    "build": "npm run shared:build && npm run app:build && npm run electron:build",
+    "shared:build": "(cd packages/shared && npm run build)",
     "app:serve": "(cd packages/renderer && npm start)",
+    "app:build": "(cd packages/renderer && npm run build)",
     "electron:serve": "(cd packages/main && npm run serve)",
     "electron:start": "(cd packages/main && npm start)",
-    "postinstall": "(cd packages/shared && npm install) && (cd packages/main && npm install) && (cd packages/renderer && npm install)"
+    "electron:build": "(cd packages/main && npm run build)",
+    "postinstall": "electron-builder install-app-deps"
   },
-  "license": "MIT",
-  "author": "",
-  "type": "commonjs",
-  "main": "index.js",
   "workspaces": [
-    "packages/renderer",
     "packages/main",
+    "packages/renderer",
     "packages/shared"
   ],
   "engines": {
     "node": ">= 22.12.0 <= 24.0.0",
+    "typescript": ">= 5.8.0 < 5.9.0",
     "npm": ">= 9.6.0"
   },
   "dependencies": {},

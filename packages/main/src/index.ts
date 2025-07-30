@@ -5,14 +5,23 @@ import { serve } from './config.js';
 import logger from './logger.js'
 import { setupIpcHandlers } from './ipc.js';
 import path from 'path';
+import unhandled from 'electron-unhandled';
+
 
 if(serve){
     import('electron-debug').then(debug => debug.default({isEnabled: true, showDevTools: true}));
 }
 
+// Handle unhandled errors
+unhandled({
+    logger: logger.error,
+    showDialog: true,
+})
+
 // TODO: Show "Report Crash" dialog
 const handleCrash = (err: Error) => {
     logger.error(err);
+    throw err;
 };
 
 // Create window on electron initialization

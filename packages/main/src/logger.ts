@@ -1,9 +1,10 @@
 
-import Logger from 'electron-log/main';
+import Logger from 'electron-log/main.js';
 import type { MainLogger, TransformFn, FileTransport, LogFile, LogMessage } from 'electron-log/src';
 import fs from 'fs';
 import path from 'path';
-import { serve } from './config';
+import { app } from 'electron';
+import { serve } from './config.js';
 
 // Cache for logger instances to avoid creating duplicates
 const loggerCache = new Map<string, MainLogger>();
@@ -63,6 +64,9 @@ export const getLogger = (logId: string): MainLogger => {
   if (cachedLogger) {
     return cachedLogger;
   }
+
+  console.log("Log Path", app.getPath('logs'));
+  console.log("App Path", app.getAppPath());
 
   // Instance. Max File = 4MB
   const logger = Logger.create( { logId } );
