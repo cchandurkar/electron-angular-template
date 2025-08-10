@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run tsc:build && electron-builder --publish never",
-    "serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
+    "serve": "wait-on tcp:4200 && npm run tsc && electron . --serve",
     "start": "npm run tsc:build && electron .",
     "tsc": "tsc -p tsconfig.json",
     "tsc:build": "tsc -p tsconfig.json --outDir ./dist/main",

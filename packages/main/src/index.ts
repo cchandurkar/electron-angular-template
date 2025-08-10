@@ -13,7 +13,7 @@ if (serve) {
 
 // Handle unhandled errors
 unhandled({
-  logger: logger.error,
+  logger: err => logger.error(err),
   showDialog: true
 });
 
