@@ -25,7 +25,8 @@
     "npm": ">= 9.6.0"
   },
   "scripts": {
-    "start": "npm-run-all -p app:serve electron:serve",
+    "start": "npm-run-all -p app:start electron:start",
+    "dev": "npm-run-all -p app:serve electron:serve",
     "build": "npm run clean && npm run shared:build && npm run app:build && npm run electron:build",
     "shared:serve": "(cd packages/shared && npm run serve)",
     "shared:build": "(cd packages/shared && npm run build)",
@@ -54,13 +55,11 @@
     "typecheck:main": "(cd packages/main && tsc --noEmit)",
     "typecheck:renderer": "(cd packages/renderer && ng build --dry-run)",
     "typecheck:shared": "(cd packages/shared && tsc --noEmit)",
-    "dev": "npm run start",
     "dev:debug": "npm run start -- --remote-debugging-port=9222",
     "release": "npm run build && electron-builder --publish=never",
     "release:publish": "npm run build && electron-builder --publish=always",
     "deps:check": "npm-check-updates",
-    "deps:update": "npm-check-updates -u && npm install",
-    "prepare": "husky"
+    "deps:update": "npm-check-updates -u && npm install"
   },
   "devDependencies": {
     "@commitlint/cli": "19.8.1",
