@@ -1,1 +1,1 @@
-export { Note } from '@local/shared/models/note';
+export { Note } from '@local/shared/models/note.js';

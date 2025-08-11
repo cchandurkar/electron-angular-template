@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "sourceMap": true,
+    "composite": true,
     "experimentalDecorators": true,
     "moduleResolution": "bundler",
     "importHelpers": true,

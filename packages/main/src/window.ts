@@ -15,7 +15,7 @@ export const createWindow = (): BrowserWindow => {
   const preloadPath = './dist/main/preload/index.js';
 
   // Create the browser window
-  let win: BrowserWindow = new BrowserWindow({
+  const win: BrowserWindow = new BrowserWindow({
     width: 800,
     height: 600,
     show: false,
@@ -48,7 +48,7 @@ export const createWindow = (): BrowserWindow => {
 
   // Emitted when the window is closed.
   win.on('closed', () => {
-    win = null;
+    win.destroy();
   });
 
   return win;

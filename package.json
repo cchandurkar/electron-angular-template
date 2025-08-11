@@ -25,8 +25,8 @@
     "npm": ">= 9.6.0"
   },
   "scripts": {
-    "start": "npm-run-all -p app:start electron:start",
-    "dev": "npm-run-all -p app:serve electron:serve",
+    "start": "npm run dev",
+    "dev": "npm run shared:build && (npm-run-all -p app:serve electron:serve)",
     "build": "npm run clean && npm run shared:build && npm run app:build && npm run electron:build",
     "shared:serve": "(cd packages/shared && npm run serve)",
     "shared:build": "(cd packages/shared && npm run build)",
