@@ -10,7 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
-    "extract-i18n": "ng extract-i18n"
+    "extract-i18n": "ng extract-i18n",
+    "vite": "vite"
   },
   "private": true,
   "dependencies": {
@@ -22,14 +23,14 @@
     "@angular/platform-browser": "^20.1.3",
     "@angular/platform-browser-dynamic": "^20.1.3",
     "@angular/router": "^20.1.3",
+    "@local/shared": "*",
     "@ng-bootstrap/ng-bootstrap": "^19.0.1",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "1.13.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.1",
-    "@local/shared": "*"
+    "zone.js": "~0.15.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.1.3",

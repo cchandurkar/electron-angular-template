@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run tsc:build && electron-builder --publish never",
-    "serve": "wait-on tcp:4200 && npm run tsc && electron . --serve",
+    "serve": "wait-on tcp:4200 && electron-vite dev -- --serve",
     "start": "npm run tsc:build && electron .",
     "tsc": "tsc -p tsconfig.json",
     "tsc:build": "tsc -p tsconfig.json --outDir ./dist/main",
@@ -18,10 +18,10 @@
   "author": "Chaitanya Chandurkar",
   "license": "MIT",
   "dependencies": {
+    "@local/shared": "*",
     "electron-log": "^5.1.7",
     "electron-unhandled": "5.0.0",
-    "yargs": "^17.7.2",
-    "@local/shared": "*"
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.6.0",
@@ -34,6 +34,7 @@
     "electron-debug": "^4.1.0",
     "electron-reload": "^2.0.0-alpha.1",
     "electron-reloader": "^1.2.3",
+    "electron-vite": "4.0.0",
     "eslint": "^9.29.0",
     "npm-run-all": "^4.1.5",
     "ts-node": "^10.9.2",
