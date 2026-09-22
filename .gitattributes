@@ -1,0 +1,9 @@
+# Normalize all text files to LF on checkout, regardless of platform or the
+# checking-out machine's core.autocrlf setting. Without this, Windows runners
+# (core.autocrlf=true by default) check files out as CRLF, and Prettier's
+# endOfLine: "lf" (.prettierrc) then flags every single file as unformatted —
+# this is a checkout-time issue, not something wrong with the committed content.
+* text=auto eol=lf
+
+# Explicit binary — never attempt line-ending conversion on it.
+*.ico binary

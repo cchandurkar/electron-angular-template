@@ -1,0 +1,43 @@
+<div class="title-bar">
+  @if (electron.isMac) {
+    <div class="mac-traffic-lights"></div>
+  }
+  <div class="title-bar-spacer"></div>
+  @if (electron.isWindows) {
+    <div class="title-bar-buttons">
+      <span
+        class="btn btn-minimize"
+        tabindex="0"
+        role="button"
+        title="Minimize"
+        (click)="minimizeWindow()"
+        (keydown.enter)="minimizeWindow()"
+        (keydown.space)="minimizeWindow()"
+      >
+        <svg lucideMinus size="16"></svg>
+      </span>
+      <span
+        class="btn btn-maximize"
+        tabindex="0"
+        role="button"
+        title="Maximize"
+        (click)="toggleMaximizeWindow()"
+        (keydown.enter)="toggleMaximizeWindow()"
+        (keydown.space)="toggleMaximizeWindow()"
+      >
+        <svg lucideSquare size="16"></svg>
+      </span>
+      <span
+        class="btn btn-quit"
+        tabindex="0"
+        role="button"
+        title="Close"
+        (click)="closeWindow()"
+        (keydown.enter)="closeWindow()"
+        (keydown.space)="closeWindow()"
+      >
+        <svg lucideX size="16"></svg>
+      </span>
+    </div>
+  }
+</div>

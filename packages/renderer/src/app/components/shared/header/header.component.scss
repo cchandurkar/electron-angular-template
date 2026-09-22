@@ -1,0 +1,65 @@
+:host {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.title-bar {
+  min-height: 32px;
+  display: flex;
+  flex-direction: row;
+  color: rgba(0, 0, 0, 0.6);
+  align-items: center;
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mac-traffic-lights {
+  min-width: 80px;
+  display: block;
+}
+
+.title-bar .title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.title-bar .title-bar-buttons {
+  -webkit-app-region: none;
+}
+
+.title-bar .title-bar-spacer {
+  flex: 1;
+  height: 100%;
+}
+
+.title-bar span.btn,
+.title-bar button.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: inherit;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.title-bar span.btn:hover,
+.title-bar button.btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.title-bar button.btn:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.3);
+  outline-offset: -2px;
+}
+
+.title-bar .title-bar-buttons span.btn.btn-quit:hover {
+  background: red !important;
+  color: white;
+}

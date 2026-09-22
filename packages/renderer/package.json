@@ -1,0 +1,46 @@
+{
+  "name": "renderer",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build -c production --base-href ./ --output-path=../main/dist/renderer",
+    "build:dev": "ng build -c development --base-href ./",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
+    "extract-i18n": "ng extract-i18n",
+    "vite": "vite"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^22.1.4",
+    "@angular/compiler": "^22.1.4",
+    "@angular/core": "^22.1.4",
+    "@angular/forms": "^22.1.4",
+    "@angular/platform-browser": "^22.1.4",
+    "@angular/router": "^22.1.4",
+    "@local/shared": "*",
+    "@lucide/angular": "1.47.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.4",
+    "@angular/cli": "^22.1.4",
+    "@angular/compiler-cli": "^22.1.4",
+    "@angular/localize": "^22.1.4",
+    "@types/jasmine": "~5.1.0",
+    "angular-eslint": "22.0.0",
+    "eslint": "^9.29.0",
+    "jasmine-core": "~5.1.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "8.61.1"
+  }
+}

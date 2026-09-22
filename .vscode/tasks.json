@@ -1,0 +1,146 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Start Development",
+      "type": "shell",
+      "command": "npm start",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "group": "development"
+      },
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": ".",
+            "endsPattern": "."
+          }
+        }
+      ]
+    },
+    {
+      "label": "🧪 Run All Tests",
+      "type": "shell",
+      "command": "npm test",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "group": "test"
+      }
+    },
+    {
+      "label": "🔍 Run Linting",
+      "type": "shell",
+      "command": "npm run lint",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "group": "quality"
+      },
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "🎨 Format Code",
+      "type": "shell",
+      "command": "npm run format",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "group": "quality"
+      }
+    },
+    {
+      "label": "🔧 Type Check All",
+      "type": "shell",
+      "command": "npm run typecheck",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "group": "quality"
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "📦 Build Production",
+      "type": "shell",
+      "command": "npm run package",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "group": "build"
+      }
+    },
+    {
+      "label": "🧹 Clean All",
+      "type": "shell",
+      "command": "npm run clean",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "group": "build"
+      }
+    },
+    {
+      "label": "📊 Check Dependencies",
+      "type": "shell",
+      "command": "npm run deps:check",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "group": "maintenance"
+      }
+    },
+    {
+      "label": "⚡ Debug Main Process",
+      "type": "shell",
+      "command": "npm run dev:debug",
+      "group": "build",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "group": "debug"
+      }
+    }
+  ]
+}

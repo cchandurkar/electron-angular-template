@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a question
+    url: https://github.com/cchandurkar/electron-angular-template/discussions
+    about: Usage questions, ideas, and general discussion — not for bug reports
+  - name: Security vulnerability
+    url: https://github.com/cchandurkar/electron-angular-template/security/advisories/new
+    about: Please report security vulnerabilities privately instead of opening a public issue

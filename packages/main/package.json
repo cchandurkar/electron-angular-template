@@ -1,0 +1,55 @@
+{
+  "name": "main",
+  "productName": "Electron Angular Template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A template for building modern Electron apps with Angular",
+  "main": "dist/main/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npm run tsc:build && npm run preload:build",
+    "package": "npm run build && electron-builder --publish never",
+    "serve": "wait-on tcp:4200 && npm-run-all --parallel tsc:watch preload:watch electron:launch",
+    "electron:launch": "wait-on dist/main/index.js dist/main/preload/index.js && electron . --serve",
+    "tsc:watch": "tsc -p tsconfig.json --outDir ./dist/main --watch",
+    "start": "npm run build && electron .",
+    "tsc": "tsc -p tsconfig.json",
+    "tsc:build": "tsc -p tsconfig.json --outDir ./dist/main",
+    "preload:build": "node scripts/build-preload.mjs",
+    "preload:watch": "node scripts/build-preload.mjs --watch",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.preload.json",
+    "test": "echo \"main package has no automated tests by design\"",
+    "lint": "eslint --ext .ts,.js",
+    "lint:fix": "eslint --ext .ts,.js --fix"
+  },
+  "homepage": "https://github.com/cchandurkar/electron-angular-template#readme",
+  "author": {
+    "name": "Chaitanya Chandurkar",
+    "email": "cchandurkar@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@local/shared": "*",
+    "electron-log": "^5.1.7",
+    "electron-unhandled": "5.0.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
+    "@types/node": "^22.5.1",
+    "@types/yargs": "^17.0.33",
+    "chokidar": "4.0.3",
+    "electron": "44.4.3",
+    "electron-builder": "26.15.5",
+    "electron-debug": "^4.1.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.29.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "6.0.3",
+    "wait-on": "^8.0.0"
+  },
+  "engines": {
+    "node": ">= 22.12.0",
+    "typescript": ">= 6.0.0 < 6.1.0"
+  }
+}
