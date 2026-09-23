@@ -1,13 +1,15 @@
 # Electron Angular Template
 
-[![CI](https://github.com/cchandurkar/electron-angular-template/actions/workflows/ci.yml/badge.svg)](https://github.com/cchandurkar/electron-angular-template/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D22.12.0-brightgreen)](.nvmrc)
+[![CI](https://img.shields.io/github/actions/workflow/status/cchandurkar/electron-angular-template/ci.yml?style=flat-square&logo=github&label=CI)](https://github.com/cchandurkar/electron-angular-template/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+![PRs: Welcome](https://img.shields.io/badge/PRs-Welcome-orange.svg?style=flat-square)
 
 An Electron starter for developers who want to build a desktop app with Angular. It gives you a working window, a typed bridge between Angular and Electron, cross-platform builds, and a small note-taking example that saves data locally.
 
-[![Angular](https://img.shields.io/badge/Angular-22-dd0031)](https://angular.dev/)
-[![Electron](https://img.shields.io/badge/Electron-44-9feaf9)](https://www.electronjs.org/)
+Runs with:
+
+- Electron v44.4.3
+- Angular v22.1.4
 
 ## ⚡ This Is a Highly Opinionated Template
 
