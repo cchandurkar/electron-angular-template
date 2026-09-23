@@ -1,0 +1,6 @@
+# Use Moonwalk as a modern, clean choice
+remote_theme: abhinavs/moonwalk
+
+# Required plugin to pull public third-party GitHub themes
+plugins:
+  - jekyll-remote-theme

@@ -1,3 +1,8 @@
+---
+layout: default
+title: Electron Angular Template
+---
+
 # Electron Angular Template
 
 [![CI](https://img.shields.io/github/actions/workflow/status/cchandurkar/electron-angular-template/ci.yml?style=flat-square&logo=github&label=CI)](https://github.com/cchandurkar/electron-angular-template/actions/workflows/ci.yml)
