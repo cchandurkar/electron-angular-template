@@ -26,6 +26,8 @@ export class NoteComponent implements OnInit, OnDestroy {
   draft = signal<NoteDraft>({ content: '' });
   noteForm = form(this.draft);
 
+  readonly lastEditedAt = signal<Date | null>(null);
+
   private readonly electron = inject(ElectronService);
   private readonly injector = inject(Injector);
   private contentChangeSub?: Subscription;
@@ -54,6 +56,7 @@ export class NoteComponent implements OnInit, OnDestroy {
   private saveNote(): void {
     this.electron.saveNote(NOTE_FILE, this.note().toData()).then(() => {
       console.debug('Note saved successfully');
+      this.lastEditedAt.set(new Date(this.note().updatedAt));
     });
   }
 }

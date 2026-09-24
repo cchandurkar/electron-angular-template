@@ -3,10 +3,13 @@
     <app-header title="Electron Angular Template"></app-header>
   </div>
   <div class="content-container">
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="onRouteActivate($event)"></router-outlet>
   </div>
   <div class="footer-container">
     <div class="footer">
+      @if (lastEditedAt(); as edited) {
+        <span class="last-edited">{{ edited | date: dateFormat(edited) }}</span>
+      }
       <span class="version">v{{ version }}</span>
     </div>
   </div>

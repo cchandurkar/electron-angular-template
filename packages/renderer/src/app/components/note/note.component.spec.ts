@@ -21,4 +21,13 @@ describe('NoteComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should record the last edited timestamp after content changes and debounce elapses', async () => {
+    expect(component.lastEditedAt()).toBeNull();
+
+    component.noteForm.content().value.set('hello world');
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    expect(component.lastEditedAt()).toBeInstanceOf(Date);
+  });
 });

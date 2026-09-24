@@ -31,11 +31,12 @@
 }
 
 .footer {
-  padding: 5px 10px;
-  text-align: right;
-}
-
-.version {
-  color: rgb(0, 0, 0, 0.5);
-  font-size: 0.8rem;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  color: rgb(0, 0, 0, 0.4);
+  word-spacing: 0.08rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
