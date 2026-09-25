@@ -60,8 +60,8 @@ const SEND_CHANNEL_DEFS = {
 };
 
 /** main → renderer broadcast (webContents.send / ipcRenderer.on) */
+/** EXAMPLE ONLY - NOT WIRED */
 const PUSH_CHANNEL_DEFS = {
-  'theme:changed': undefined as unknown as { mode: 'light' | 'dark' },
   'updater:status': undefined as unknown as UpdaterStatus
 };
 
