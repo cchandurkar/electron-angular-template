@@ -29,18 +29,21 @@ div.note-content {
   overflow: hidden;
 }
 
-textarea {
-  margin: 0;
+.note-editor {
+  position: relative;
   flex: 1 1 0%;
   min-height: 0;
   width: 100%;
-  height: 100%;
-  resize: none;
   overflow-y: auto;
+}
+
+// Tiptap/ProseMirror inserts its editor DOM imperatively, outside Angular's
+// template compiler, so it never receives the emulated-encapsulation
+// scoping attribute. `::ng-deep` is required here to reach it; it is not
+// needed (and is not used) for any Angular-templated element in this file.
+.note-editor ::ng-deep .ProseMirror {
+  min-height: 100%;
   outline: none;
-  box-shadow: none;
-  background: transparent;
-  border: none;
   font-size: 0.9rem;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.8);
@@ -48,19 +51,100 @@ textarea {
   line-height: 1.5;
 }
 
-textarea::placeholder {
-  color: rgba(0, 0, 0, 0.5);
-  opacity: 1;
-  font-style: italic;
+.note-editor ::ng-deep .ProseMirror > * + * {
+  margin-top: 12px;
 }
 
-textarea::selection {
+.note-editor ::ng-deep .ProseMirror p {
+  margin: 0;
+}
+
+.note-editor ::ng-deep .ProseMirror ul,
+.note-editor ::ng-deep .ProseMirror ol {
+  padding-left: 24px;
+  list-style-position: outside;
+}
+
+.note-editor ::ng-deep .ProseMirror ol {
+  list-style-type: decimal;
+}
+
+.note-editor ::ng-deep .ProseMirror ul {
+  list-style-type: disc;
+}
+
+.note-editor ::ng-deep .ProseMirror li > p {
+  margin: 0;
+}
+
+.note-editor ::ng-deep .ProseMirror li > p + p {
+  margin-top: 8px;
+}
+
+.note-editor ::ng-deep .ProseMirror b,
+.note-editor ::ng-deep .ProseMirror strong {
+  font-weight: 600;
+}
+
+.note-editor ::ng-deep .ProseMirror::selection,
+.note-editor ::ng-deep .ProseMirror *::selection {
   background: rgba(0, 0, 0, 0.2);
 }
 
-textarea:focus {
-  outline: none;
-  box-shadow: none;
-  background: none;
+/* Bubble menu toolbar rendered by the Tiptap BubbleMenu extension. It manages
+   its own visibility/position inline (via floating-ui); the base hidden state
+   here only prevents a flash of the unpositioned menu before that kicks in. */
+.bubble-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: #1e1e20;
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 4px 14px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+  visibility: hidden;
+  transition: opacity 0.12s ease;
+}
+
+.bubble-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    background 0.1s ease,
+    color 0.1s ease;
+}
+
+.bubble-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.bubble-menu-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: -2px;
+}
+
+.bubble-menu-btn.active {
+  background: rgba(255, 249, 177, 0.2);
+}
+
+.bubble-menu-btn.active:hover {
+  background: rgba(255, 249, 177, 0.28);
 }

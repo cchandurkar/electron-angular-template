@@ -1,21 +1,40 @@
+/* Standard scrollbar styling (Firefox / W3C standards-track) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* WebKit/Blink scrollbar footprint */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
-/* Track */
+/* Track & corner (transparent, thumb is the only visible element) */
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
+  background: transparent;
 }
 
-/* Handle */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Thumb: flat rectangular shape with slight inset for breathing room */
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 0;
   cursor: pointer;
 }
 
-/* Handle on hover */
+/* Thumb on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.38);
 }
+
+/* Thumb on active drag */
+::-webkit-scrollbar-thumb:active {
+  background-color: rgba(0, 0, 0, 0.55);
+}
+

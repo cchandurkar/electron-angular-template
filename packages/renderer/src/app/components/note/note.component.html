@@ -1,6 +1,47 @@
 <div class="note-container">
   <div class="note-content">
-    <textarea class="form-control" rows="10" placeholder="Write your note here..." [formField]="noteForm.content">
-    </textarea>
+    <div class="bubble-menu" #bubbleMenu role="toolbar" aria-label="Text formatting">
+      <button
+        type="button"
+        class="bubble-menu-btn"
+        [class.active]="activeMarks().bold"
+        [attr.aria-pressed]="activeMarks().bold"
+        title="Bold"
+        (click)="toggleBold()"
+      >
+        <svg lucideBold size="16"></svg>
+      </button>
+      <button
+        type="button"
+        class="bubble-menu-btn"
+        [class.active]="activeMarks().italic"
+        [attr.aria-pressed]="activeMarks().italic"
+        title="Italic"
+        (click)="toggleItalic()"
+      >
+        <svg lucideItalic size="16"></svg>
+      </button>
+      <button
+        type="button"
+        class="bubble-menu-btn"
+        [class.active]="activeMarks().bulletList"
+        [attr.aria-pressed]="activeMarks().bulletList"
+        title="Bullet list"
+        (click)="toggleBulletList()"
+      >
+        <svg lucideList size="16"></svg>
+      </button>
+      <button
+        type="button"
+        class="bubble-menu-btn"
+        [class.active]="activeMarks().orderedList"
+        [attr.aria-pressed]="activeMarks().orderedList"
+        title="Ordered list"
+        (click)="toggleOrderedList()"
+      >
+        <svg lucideListOrdered size="16"></svg>
+      </button>
+    </div>
+    <div class="note-editor" #editorRoot></div>
   </div>
 </div>

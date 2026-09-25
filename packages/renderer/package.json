@@ -21,8 +21,13 @@
     "@angular/forms": "^22.1.4",
     "@angular/platform-browser": "^22.1.4",
     "@angular/router": "^22.1.4",
+    "@floating-ui/dom": "1.8.0",
     "@local/shared": "*",
     "@lucide/angular": "1.47.0",
+    "@tiptap/core": "3.31.3",
+    "@tiptap/extension-bubble-menu": "3.31.3",
+    "@tiptap/markdown": "3.31.3",
+    "@tiptap/starter-kit": "3.31.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

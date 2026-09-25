@@ -48,6 +48,8 @@ npm start
 
 The app opens to a small note editor. Type something, close the app, and open it again to see the example's local save/load flow.
 
+<img src="./packages/main/assets/demo/output.gif">
+
 ## 🛼 Make it yours
 
 After creating a repository from the template, run the interactive rebrand helper:

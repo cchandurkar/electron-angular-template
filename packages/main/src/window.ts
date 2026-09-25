@@ -9,14 +9,11 @@ export const createWindow = (): BrowserWindow => {
   const serveURL = 'http://localhost:4200';
   const distURL = './dist/renderer/browser/index.html';
   const preloadPath = './dist/main/preload/index.js';
-  // Windows/Linux use this for the window/taskbar icon; macOS ignores it in
-  // favor of the Dock icon (packaged .app bundles it from the .icns instead —
-  // see index.ts for the dev-mode Dock icon).
   const iconPath = './assets/icons/icon-512.png';
 
   const win: BrowserWindow = new BrowserWindow({
-    width: 450,
-    height: 600,
+    width: 600,
+    height: 450,
     show: false,
     frame: false,
     titleBarStyle: 'hidden',
