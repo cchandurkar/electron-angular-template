@@ -9,13 +9,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "files.exclude": {
-    "**/node_modules": true,
-    "**/.git": true,
-    "**/.DS_Store": true,
-    "**/dist": true,
-    "**/build": true
-  },
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
