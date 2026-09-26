@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 /**
  * One-shot, manually-run rebrand helper for people who used "Use this template".
  *
@@ -7,7 +8,7 @@
  *
  * What it updates: package identity (root/main/shared package.json), electron-builder
  * productName/appId, the in-app header title, LICENSE copyright, and the GitHub URLs/repo
- * name/product name in README, CONTRIBUTING, AGENTS.md, release.yml, and the issue templates.
+ * name/product name in README, CONTRIBUTING, AGENTS.md, and the issue templates.
  * See the printed summary at the end for exactly which files changed, plus a short list of
  * things left for you to do by hand (app icons, etc.) — this script deliberately does not
  * touch those.
@@ -17,7 +18,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { input } from '@inquirer/prompts';
 
@@ -187,7 +188,6 @@ export async function applyRebrand(answers, root = ROOT) {
     'README.md',
     'CONTRIBUTING.md',
     'AGENTS.md',
-    '.github/workflows/release.yml',
     '.github/ISSUE_TEMPLATE/config.yml',
     '.github/ISSUE_TEMPLATE/bug_report.yml'
   ]) {
@@ -223,7 +223,7 @@ async function main() {
   console.log('  - Review the changes yourself (git diff) before committing');
 }
 
-const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+const isMainModule = import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMainModule) {
   main().catch(err => {
     if (err.name === 'ExitPromptError') {
