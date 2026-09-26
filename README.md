@@ -25,13 +25,24 @@ An Electron starter for developers who want to build a desktop app with Angular.
 
 ## ⚡ This Is a Highly Opinionated Template
 
-The template starts with standalone, zoneless Angular, separate npm workspaces for the renderer, main process, and shared contract, and a frameless window. It gives you a working desktop app with a specific way to organize code and cross the process boundary. The note editor demonstrates that structure; it is not a required part of your app.
+This template is for developers who want to build an Electron desktop app with Angular while keeping a clear boundary between the renderer and the Electron main process.
 
-If those defaults fit what you want to build, you can start with the example and replace it piece by piece. If you want a different Angular setup or window design, expect to change those choices early.
+It starts with standalone, zoneless Angular, separate npm workspaces for the renderer, main process, and shared contract, a sandboxed renderer, and a typed preload bridge. The included note editor demonstrates how those pieces work together; it is an example, not a required part of your application.
+
+It is a good fit if you want:
+
+- Angular's standard CLI and tooling rather than replacing the renderer build with Vite
+- TypeScript across Angular, preload, and the Electron main process
+- A shared, typed IPC contract between processes
+- `contextBridge` and `contextIsolation` instead of exposing Node APIs to the renderer
+- Playwright tests against the Electron application
+- Cross-platform packaging for macOS, Windows, and Linux
+
+If those defaults match how you want to structure your application, you can start with the example and replace it piece by piece. If you prefer a single-package layout, a different renderer build system, or a different process architecture, expect to change those choices early.
 
 ## 🌉 The Preload Bridge Is the Point
 
-The bridge between Angular and Electron is part of the starter, not something you have to design before building your first feature:
+The main architectural feature of this starter is the boundary between Angular and Electron. The preload bridge, shared IPC contract, and main-process handlers are already wired together so you don't have to design that structure before building your first feature.
 
 - The renderer stays sandboxed and isolated; the preload exposes a narrow `window.electronApi` instead of raw `ipcRenderer`.
 - One shared IPC contract supplies channel names, TypeScript argument and result types, and the preload's channel allowlists.
