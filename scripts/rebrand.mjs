@@ -7,8 +7,9 @@
  * postinstall) — this only touches files when you explicitly ask it to.
  *
  * What it updates: package identity (root/main/shared package.json), electron-builder
- * productName/appId, the in-app header title, LICENSE copyright, and the GitHub URLs/repo
- * name/product name in README, CONTRIBUTING, AGENTS.md, and the issue templates.
+ * productName/appId, the in-app header title, the browser/window <title>, LICENSE copyright,
+ * and the GitHub URLs/repo name/product name in README, CONTRIBUTING, AGENTS.md, and the issue
+ * templates.
  * See the printed summary at the end for exactly which files changed, plus a short list of
  * things left for you to do by hand (app icons, etc.) — this script deliberately does not
  * touch those.
@@ -49,14 +50,36 @@ async function replaceInFile(root, relPath, replacements) {
 
 const notBlank = value => value.trim().length > 0 || 'Required';
 
+// Check if the terminal supports and accepts color output
+const supportsColor = () => {
+  if (typeof process === 'undefined') return false;
+
+  // Honor standard CLI flags and environment variables
+  if (process.argv.includes('--no-color')) return false;
+  if (process.env.NO_COLOR) return false;
+  if (process.argv.includes('--color') || process.env.FORCE_COLOR) return true;
+
+  // Ensure we are outputting directly to an interactive terminal screen
+  return !!process.stdout && process.stdout.isTTY;
+};
+
+// Color Wrapper Factory
+const color = (ansiCode, resetCode = '\x1b[0m') => {
+  const useColor = supportsColor();
+  return text => (useColor ? `${ansiCode}${text}${resetCode}` : text);
+};
+
+// Color Definition Palette
+const cyan = color('\x1b[96m');
+const bold = color('\x1b[1m', '\x1b[22m');
+const gray = color('\x1b[90m');
+
 /**
  * Prompts the user for every rebrand input, interactively (via @inquirer/prompts). Exported
  * separately from `applyRebrand` so the file-mutation logic can be exercised directly (e.g.
  * in tests) without going through a real terminal prompt.
  */
 export async function gatherAnswers(root = ROOT) {
-  console.log('Rebrand this template — press Enter to keep a suggested default.\n');
-
   const { data: rootPkg } = await readJson(root, 'package.json');
   const { data: mainPkg } = await readJson(root, 'packages/main/package.json');
 
@@ -65,22 +88,45 @@ export async function gatherAnswers(root = ROOT) {
     /github\.com[/:]([^/]+)\//.exec(rootPkg.repository?.url ?? '')?.[1] ?? 'cchandurkar';
   const oldProductName = mainPkg.productName;
 
-  const repoName = await input({ message: 'GitHub repository name', default: oldRepoName });
+  console.log(`\n${cyan('┃')}  ${bold('Hi, thank you for trying this template')}`);
+  console.log(
+    `${cyan('┃')}  ${gray("Let's quickly customize your repository name, project title,")}`
+  );
+  console.log(
+    `${cyan('┃')}  ${gray('and configuration settings to match your new project. Press Enter to keep a suggested default.')}\n`
+  );
+
+  const repoName = await input({
+    message: 'GitHub repository name',
+    default: oldRepoName
+  });
+
   const githubUser = await input({
     message: 'GitHub username or org',
     required: true,
     validate: notBlank
   });
+
   const productName = await input({
     message: 'App display name (productName)',
     default: oldProductName
   });
+
   const appId = await input({
     message: 'App ID (reverse-DNS)',
     default: `com.${slug(githubUser)}.${slug(repoName)}`
   });
-  const authorName = await input({ message: 'Author name', required: true, validate: notBlank });
-  const authorEmail = await input({ message: 'Author email (optional)' });
+
+  const authorName = await input({
+    message: 'Author name',
+    required: true,
+    validate: notBlank
+  });
+
+  const authorEmail = await input({
+    message: 'Author email (optional)'
+  });
+
   const year = await input({
     message: 'Copyright year',
     default: String(new Date().getFullYear())
@@ -170,6 +216,12 @@ export async function applyRebrand(answers, root = ROOT) {
   ]);
   changed.push('packages/renderer/src/app/app.component.html');
 
+  // Browser tab / window <title>
+  await replaceInFile(root, 'packages/renderer/src/index.html', [
+    [/<title>.*<\/title>/, `<title>${productName}</title>`]
+  ]);
+  changed.push('packages/renderer/src/index.html');
+
   // LICENSE copyright line
   await replaceInFile(root, 'LICENSE', [
     [/Copyright \(c\) \d{4} .+/, `Copyright (c) ${year} ${authorName}`]
@@ -199,7 +251,11 @@ export async function applyRebrand(answers, root = ROOT) {
   // spurious formatting error for a file that was never going to be formatted anyway.
   const formattable = changed.filter(file => file !== 'LICENSE');
   try {
-    execFileSync('npx', ['prettier', '--write', ...formattable], { cwd: root, stdio: 'ignore' });
+    const prettierBin = path.join(root, 'node_modules/prettier/bin/prettier.cjs');
+    execFileSync(process.execPath, [prettierBin, '--write', ...formattable], {
+      cwd: root,
+      stdio: 'ignore'
+    });
   } catch {
     // Non-fatal — formatting can be fixed later with `npm run format`.
   }
@@ -211,16 +267,20 @@ async function main() {
   const answers = await gatherAnswers(ROOT);
   const changed = await applyRebrand(answers, ROOT);
 
-  console.log('\nDone. Updated:');
-  for (const file of changed) console.log(`  - ${file}`);
+  console.log(`\n${cyan('┃')}  ${bold('Done. Updated:')}`);
+  for (const file of changed) console.log(`${cyan('┃')}  ${gray(`- ${file}`)}`);
 
-  console.log('\nStill worth doing by hand:');
-  console.log('  - Replace app icons in packages/main/assets/icons/ (see that dir for sizes)');
+  console.log(`\n${cyan('┃')}  ${bold('Still worth doing by hand:')}`);
   console.log(
-    '  - packages/renderer/src/index.html <title> is generic ("Renderer") — brand it if you want'
+    `${cyan('┃')}  ${gray('- Replace app icons in packages/main/assets/icons/ (see that dir for sizes)')}`
   );
-  console.log('  - Run `npm install` once so package-lock.json picks up the new package name');
-  console.log('  - Review the changes yourself (git diff) before committing');
+  console.log(
+    `${cyan('┃')}  ${gray('- Run `npm install` once so package-lock.json picks up the new package name')}`
+  );
+  console.log(
+    `${cyan('┃')}  ${gray('- Review the changes yourself (git diff) before committing')}`
+  );
+  console.log('\n');
 }
 
 const isMainModule = import.meta.url === pathToFileURL(process.argv[1]).href;
