@@ -165,14 +165,16 @@ The frameless header with custom window controls is also a design choice, not a 
 
 ## 🚀 Releasing (macOS notarization)
 
-[`.github/workflows/release.yml`](.github/workflows/release.yml) builds installers for macOS, Windows, and Linux and attaches them to a GitHub Release whenever you push a tag matching `v*.*.*`:
+[`.github/workflows/release.yml`](.github/workflows/release.yml) builds installers for macOS, Windows, and Linux and publishes them to a GitHub Release whenever you push a tag matching `v*.*.*`:
 
 ```bash
+# packages/main/package.json's "version" must match the tag (electron-builder computes the
+# release tag from it, not from the git ref) — bump it first, then tag and push.
 git tag v0.2.0
 git push origin v0.2.0
 ```
 
-It runs `npm run release` on each OS (clean + build + `electron-builder --publish never`), uploads the installers as workflow artifacts, then a `publish` job downloads them all and creates (or updates) the GitHub Release for that tag via `gh release create`/`gh release upload`.
+Each OS runs `npm run release` (clean + build + `electron-builder --publish always`), which builds its installers **and** publishes them straight to the GitHub Release for that tag — no separate publish/upload job. `electron-builder.json`'s `publish.provider: "github"` doesn't hardcode an `owner`/`repo`; electron-builder auto-detects them from this repo's own git remote, so a fork publishes to _its own_ releases automatically, no config edit needed.
 
 Artifacts produced: macOS `.dmg` + `.zip`, Windows `.exe` (NSIS installer + portable), Linux `.deb` + `.AppImage` + `.rpm` + `.tar.gz` + `.flatpak`.
 
@@ -192,7 +194,8 @@ Notes:
 - `electron-builder.json` keeps `mac.notarize: false` so local `npm run package` stays fast and unsigned for smoke-testing installers. `packages/main/package.json`'s `package:release` script overrides that to `true` via `-c.mac.notarize=true` — you don't need to edit the config file.
 - The `rpm` Linux target needs `rpm`/`rpmbuild` on the runner; the shared [`setup-build-env`](.github/actions/setup-build-env/action.yml) composite action installs it alongside the other Linux native deps.
 - Windows and Linux builds are unsigned in this template (no `win.certificateFile`/Authenticode setup) — add that separately if you need it.
-- This only uploads artifacts to this repository's GitHub Releases; it doesn't set `electron-builder`'s `publish`/auto-update feed, which stays `null`.
+- `GH_TOKEN`/`GITHUB_TOKEN` for the publish step is the workflow's automatic built-in token (`${{ github.token }}`) — no extra secret needed for that part.
+- **This publishes installers to GitHub Releases; it does not make the app auto-update itself.** `electron-builder` generates the `latest.yml`/`latest-mac.yml`/`latest-linux.yml` update-feed metadata these releases need, but nothing in `packages/main` reads it yet — the `updater:status` push channel is still a placeholder (see [Add an IPC Channel](#-add-an-ipc-channel)). Wiring `electron-updater` into the main process to actually check/download/apply updates is tracked as a follow-up, not included yet.
 
 ## 🛠️ Available Scripts
 

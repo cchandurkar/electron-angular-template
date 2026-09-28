@@ -4,7 +4,9 @@
     "output": "../../build/",
     "buildResources": "assets/icons"
   },
-  "publish": null,
+  "publish": {
+    "provider": "github"
+  },
   "artifactName": "${productName}-v${version}.${ext}",
   "asar": true,
   "forceCodeSigning": false,
