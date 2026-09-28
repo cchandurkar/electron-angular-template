@@ -29,6 +29,7 @@
   "mac": {
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "target": ["dmg"]
+    "target": ["dmg"],
+    "notarize": false
   }
 }
