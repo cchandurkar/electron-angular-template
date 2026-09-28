@@ -18,6 +18,7 @@ An Electron starter for developers who want to build a desktop app with Angular.
 - [Project Layout](#%EF%B8%8F-project-layout)
 - [Add an IPC Channel](#-add-an-ipc-channel)
 - [Make It Yours](#-make-it-yours)
+- [Releasing (macOS notarization)](#-releasing-macos-notarization)
 - [Available Scripts](#%EF%B8%8F-available-scripts)
 - [Troubleshooting](#-troubleshooting)
 - [How This Compares](#-how-this-compares)
@@ -146,7 +147,7 @@ It updates package and repository metadata, the app's display name and ID, the i
 
 Then replace the app icons in [`packages/main/assets/icons`](packages/main/assets/icons), the renderer's [`favicon.ico`](packages/renderer/public/favicon.ico), and the generic HTML title in [`packages/renderer/src/index.html`](packages/renderer/src/index.html). Remove the note example once you've used it to understand the wiring.
 
-Before distributing an app, set the identity and release settings you need, including signing and notarization where applicable. The template intentionally does not configure a signing identity, an update server, or automatic updates.
+Before distributing an app, set the identity and release settings you need, including signing and notarization where applicable. The template intentionally does not configure a signing identity, an update server, or automatic updates — see [Releasing](#-releasing-macos-notarization) below for the macOS signing/notarization workflow this template ships with.
 
 ### What is example, what is template
 
@@ -162,28 +163,56 @@ Everything about notes exists to demonstrate the wiring and can be deleted:
 
 The frameless header with custom window controls is also a design choice, not a requirement. If you prefer a native title bar, set `frame: true` in `window.ts` and drop the header component.
 
-Before distributing an app, set the identity and release settings you need, including signing and notarization where applicable. The template intentionally does not configure a signing identity, an update server, or automatic updates.
+## 🚀 Releasing (macOS notarization)
+
+[`.github/workflows/release.yml`](.github/workflows/release.yml) builds installers for macOS, Windows, and Linux and attaches them to a GitHub Release whenever you push a tag matching `v*.*.*`:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+It runs `npm run release` on each OS (clean + build + `electron-builder --publish never`), uploads the installers as workflow artifacts, then a `publish` job downloads them all and creates (or updates) the GitHub Release for that tag via `gh release create`/`gh release upload`.
+
+The macOS leg additionally signs with a Developer ID Application certificate and notarizes with Apple's `notarytool`, gated on these repository secrets (Settings → Secrets and variables → Actions). Without them the macOS build step fails; Linux and Windows builds don't need them and succeed regardless:
+
+| Secret                       | What it is                                                                                                           |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `MAC_CERTIFICATE_P12_BASE64` | Your Developer ID Application certificate + key, exported as `.p12`, base64-encoded (`base64 -i cert.p12 \| pbcopy`) |
+| `MAC_CERTIFICATE_PASSWORD`   | The export password for that `.p12`                                                                                  |
+| `APPLE_API_KEY_BASE64`       | An App Store Connect API key (`.p8`), base64-encoded                                                                 |
+| `APPLE_API_KEY_ID`           | The key ID shown next to that API key in App Store Connect                                                           |
+| `APPLE_API_ISSUER`           | Your App Store Connect issuer ID                                                                                     |
+| `APPLE_TEAM_ID`              | Your Apple Developer Team ID                                                                                         |
+
+Notes:
+
+- You need an active [Apple Developer Program](https://developer.apple.com/programs/) membership to create the certificate and API key above.
+- `electron-builder.json` keeps `mac.notarize: false` so local `npm run package` stays fast and unsigned for smoke-testing installers. `packages/main/package.json`'s `package:release` script overrides that to `true` via `-c.mac.notarize=true` — you don't need to edit the config file.
+- Windows and Linux builds are unsigned in this template (no `win.certificateFile`/Authenticode setup) — add that separately if you need it.
+- This only uploads artifacts to this repository's GitHub Releases; it doesn't set `electron-builder`'s `publish`/auto-update feed, which stays `null`.
 
 ## 🛠️ Available Scripts
 
 Run these commands from the repository root:
 
-| Command                | Description                                              |
-| ---------------------- | -------------------------------------------------------- |
-| `npm start`            | Start development mode (Angular + Electron)              |
-| `npm run build`        | Compile all packages (no installers)                     |
-| `npm run package`      | Compile + package into installers (`.dmg`/`.exe`/etc.)   |
-| `npm run clean`        | Clean all build artifacts                                |
-| `npm run lint`         | Lint all packages                                        |
-| `npm run lint:fix`     | Fix linting issues in all packages                       |
-| `npm run format`       | Format code with Prettier                                |
-| `npm run format:check` | Check code formatting                                    |
-| `npm run test`         | Run tests in all packages                                |
-| `npm run typecheck`    | Type-check all packages                                  |
-| `npm run verify`       | Run format:check + lint + typecheck + tests — same as CI |
-| `npm run dev:debug`    | Start development mode with remote debugging (port 9222) |
+| Command                | Description                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| `npm start`            | Start development mode (Angular + Electron)                                                            |
+| `npm run build`        | Compile all packages (no installers)                                                                   |
+| `npm run package`      | Compile + package into installers (`.dmg`/`.exe`/etc.)                                                 |
+| `npm run release`      | Like `package`, plus macOS notarization (used by CI — see [Releasing](#-releasing-macos-notarization)) |
+| `npm run clean`        | Clean all build artifacts                                                                              |
+| `npm run lint`         | Lint all packages                                                                                      |
+| `npm run lint:fix`     | Fix linting issues in all packages                                                                     |
+| `npm run format`       | Format code with Prettier                                                                              |
+| `npm run format:check` | Check code formatting                                                                                  |
+| `npm run test`         | Run tests in all packages                                                                              |
+| `npm run typecheck`    | Type-check all packages                                                                                |
+| `npm run verify`       | Run format:check + lint + typecheck + tests — same as CI                                               |
+| `npm run dev:debug`    | Start development mode with remote debugging (port 9222)                                               |
 
-The CI workflow runs checks and packaging on macOS, Windows, and Linux.
+The CI workflow runs checks and packaging on macOS, Windows, and Linux. The release workflow (tag push) builds and notarizes installers and attaches them to a GitHub Release — see [Releasing](#-releasing-macos-notarization).
 
 ## 🧯 Troubleshooting
 
