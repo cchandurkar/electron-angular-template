@@ -185,7 +185,6 @@ The macOS leg additionally signs with a Developer ID Application certificate and
 | `APPLE_API_KEY_BASE64`       | An App Store Connect API key (`.p8`), base64-encoded                                                                                                  |
 | `APPLE_API_KEY_ID`           | The key ID shown next to that API key in App Store Connect                                                                                            |
 | `APPLE_API_ISSUER`           | Your App Store Connect issuer ID                                                                                                                      |
-| `APPLE_TEAM_ID`              | Your Apple Developer Team ID                                                                                                                          |
 
 Notes:
 
