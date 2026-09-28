@@ -9,6 +9,7 @@
   "scripts": {
     "build": "npm run tsc:build && npm run preload:build",
     "package": "npm run build && electron-builder --publish never",
+    "package:release": "npm run build && electron-builder --publish never -c.mac.notarize=true",
     "serve": "wait-on tcp:4200 && npm-run-all --parallel tsc:watch preload:watch electron:launch",
     "electron:launch": "wait-on dist/main/index.js dist/main/preload/index.js && electron . --serve",
     "tsc:watch": "tsc -p tsconfig.json --outDir ./dist/main --watch",
