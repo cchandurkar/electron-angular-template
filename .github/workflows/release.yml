@@ -35,7 +35,6 @@ jobs:
             artifact-path: |
               build/*.dmg
               build/*.zip
-              build/*.pkg
           - os: windows-latest
             artifact-name: release-windows
             artifact-path: build/*.exe
@@ -58,10 +57,6 @@ jobs:
         env:
           CSC_LINK: ${{ runner.os == 'macOS' && secrets.MAC_CERTIFICATE_P12_BASE64 || '' }}
           CSC_KEY_PASSWORD: ${{ runner.os == 'macOS' && secrets.MAC_CERTIFICATE_PASSWORD || '' }}
-          # pkg installers sign with a separate "Developer ID Installer" certificate — the
-          # app-signing cert above (CSC_LINK) can't sign .pkg. See README > Releasing.
-          CSC_INSTALLER_LINK: ${{ runner.os == 'macOS' && secrets.MAC_INSTALLER_CERTIFICATE_P12_BASE64 || '' }}
-          CSC_INSTALLER_KEY_PASSWORD: ${{ runner.os == 'macOS' && secrets.MAC_INSTALLER_CERTIFICATE_PASSWORD || '' }}
           APPLE_API_KEY: ${{ runner.os == 'macOS' && secrets.APPLE_API_KEY_BASE64 || '' }}
           APPLE_API_KEY_ID: ${{ runner.os == 'macOS' && secrets.APPLE_API_KEY_ID || '' }}
           APPLE_API_ISSUER: ${{ runner.os == 'macOS' && secrets.APPLE_API_ISSUER || '' }}

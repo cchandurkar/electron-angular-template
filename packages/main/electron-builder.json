@@ -29,7 +29,7 @@
   "mac": {
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "target": ["dmg", "zip", "pkg"],
+    "target": ["dmg", "zip"],
     "notarize": false
   }
 }
