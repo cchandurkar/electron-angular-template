@@ -174,21 +174,26 @@ git push origin v0.2.0
 
 It runs `npm run release` on each OS (clean + build + `electron-builder --publish never`), uploads the installers as workflow artifacts, then a `publish` job downloads them all and creates (or updates) the GitHub Release for that tag via `gh release create`/`gh release upload`.
 
+Artifacts produced: macOS `.dmg` + `.zip` + `.pkg`, Windows `.exe` (NSIS installer + portable), Linux `.deb` + `.AppImage` + `.rpm` + `.tar.gz` + `.flatpak`.
+
 The macOS leg additionally signs with a Developer ID Application certificate and notarizes with Apple's `notarytool`, gated on these repository secrets (Settings → Secrets and variables → Actions). Without them the macOS build step fails; Linux and Windows builds don't need them and succeed regardless:
 
-| Secret                       | What it is                                                                                                           |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `MAC_CERTIFICATE_P12_BASE64` | Your Developer ID Application certificate + key, exported as `.p12`, base64-encoded (`base64 -i cert.p12 \| pbcopy`) |
-| `MAC_CERTIFICATE_PASSWORD`   | The export password for that `.p12`                                                                                  |
-| `APPLE_API_KEY_BASE64`       | An App Store Connect API key (`.p8`), base64-encoded                                                                 |
-| `APPLE_API_KEY_ID`           | The key ID shown next to that API key in App Store Connect                                                           |
-| `APPLE_API_ISSUER`           | Your App Store Connect issuer ID                                                                                     |
-| `APPLE_TEAM_ID`              | Your Apple Developer Team ID                                                                                         |
+| Secret                                 | What it is                                                                                                                                                |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MAC_CERTIFICATE_P12_BASE64`           | Your Developer ID **Application** certificate + key (signs the `.app`/`.dmg`/`.zip`), exported as `.p12`, base64-encoded (`base64 -i cert.p12 \| pbcopy`) |
+| `MAC_CERTIFICATE_PASSWORD`             | The export password for that `.p12`                                                                                                                       |
+| `MAC_INSTALLER_CERTIFICATE_P12_BASE64` | A **separate** Developer ID **Installer** certificate — required to sign the `.pkg` target specifically; the Application cert above can't sign it         |
+| `MAC_INSTALLER_CERTIFICATE_PASSWORD`   | The export password for that Installer `.p12`                                                                                                             |
+| `APPLE_API_KEY_BASE64`                 | An App Store Connect API key (`.p8`), base64-encoded                                                                                                      |
+| `APPLE_API_KEY_ID`                     | The key ID shown next to that API key in App Store Connect                                                                                                |
+| `APPLE_API_ISSUER`                     | Your App Store Connect issuer ID                                                                                                                          |
+| `APPLE_TEAM_ID`                        | Your Apple Developer Team ID                                                                                                                              |
 
 Notes:
 
-- You need an active [Apple Developer Program](https://developer.apple.com/programs/) membership to create the certificate and API key above.
+- You need an active [Apple Developer Program](https://developer.apple.com/programs/) membership to create the certificates and API key above. Developer ID **Application** and Developer ID **Installer** are two distinct certificate types in the same account — you need both if you want a signed `.pkg`.
 - `electron-builder.json` keeps `mac.notarize: false` so local `npm run package` stays fast and unsigned for smoke-testing installers. `packages/main/package.json`'s `package:release` script overrides that to `true` via `-c.mac.notarize=true` — you don't need to edit the config file.
+- The `rpm` Linux target needs `rpm`/`rpmbuild` on the runner; the shared [`setup-build-env`](.github/actions/setup-build-env/action.yml) composite action installs it alongside the other Linux native deps.
 - Windows and Linux builds are unsigned in this template (no `win.certificateFile`/Authenticode setup) — add that separately if you need it.
 - This only uploads artifacts to this repository's GitHub Releases; it doesn't set `electron-builder`'s `publish`/auto-update feed, which stays `null`.
 

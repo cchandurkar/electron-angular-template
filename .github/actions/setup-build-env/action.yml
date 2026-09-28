@@ -10,12 +10,14 @@ runs:
     # xvfb is installed unconditionally here (even though only ci.yml's E2E step uses it)
     # so both workflows share one Linux package list instead of two lists that can drift.
     # It's a tiny package; installing it unused in release.yml costs nothing.
+    # rpm is electron-builder's packaging tool for the `rpm` Linux target — ubuntu-latest
+    # doesn't ship it by default (see electron-builder's multi-platform-build docs).
     - name: Install Linux native dependencies (electron-builder, xvfb for headless E2E)
       if: runner.os == 'Linux'
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf flatpak flatpak-builder xvfb
+        sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf flatpak flatpak-builder xvfb rpm
 
     - name: Install Flatpak runtime (electron-builder flatpak target)
       if: runner.os == 'Linux'

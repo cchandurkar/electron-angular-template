@@ -17,7 +17,7 @@
     "artifactName": "${productName}-v${version}-Setup.${ext}"
   },
   "linux": {
-    "target": ["deb", "AppImage", { "target": "flatpak", "arch": ["x64"] }]
+    "target": ["deb", "AppImage", "rpm", "tar.gz", { "target": "flatpak", "arch": ["x64"] }]
   },
   "flatpak": {
     "runtime": "org.freedesktop.Platform",
@@ -29,7 +29,7 @@
   "mac": {
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "target": ["dmg"],
+    "target": ["dmg", "zip", "pkg"],
     "notarize": false
   }
 }
