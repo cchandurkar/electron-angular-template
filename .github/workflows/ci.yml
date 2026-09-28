@@ -55,7 +55,7 @@ jobs:
       # every run otherwise. Cache path list covers all 3 OSes; actions/cache skips whichever
       # paths don't exist on the current runner, and the OS-prefixed key keeps them separate.
       - name: Cache Electron/electron-builder downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cache/electron
