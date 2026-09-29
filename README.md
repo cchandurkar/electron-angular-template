@@ -18,6 +18,7 @@ An Electron starter for developers who want to build a desktop app with Angular.
 - [Project Layout](#%EF%B8%8F-project-layout)
 - [Add an IPC Channel](#-add-an-ipc-channel)
 - [Make It Yours](#-make-it-yours)
+- [Releasing (macOS notarization)](#-releasing-macos-notarization)
 - [Available Scripts](#%EF%B8%8F-available-scripts)
 - [Troubleshooting](#-troubleshooting)
 - [How This Compares](#-how-this-compares)
@@ -85,7 +86,7 @@ packages/
 │   │   ├── storage.ts    userData file storage
 │   │   └── preload/      contextBridge script, bundled to CJS for the sandbox
 │   ├── assets/icons/     App icons for electron-builder
-│   └── electron-builder.json
+│   └── electron-builder.config.js
 ├── renderer/             Angular app (browser sandbox, no Node access)
 │   └── src/app/
 │       ├── components/   Standalone components (note editor, header)
@@ -146,7 +147,7 @@ It updates package and repository metadata, the app's display name and ID, the i
 
 Then replace the app icons in [`packages/main/assets/icons`](packages/main/assets/icons), the renderer's [`favicon.ico`](packages/renderer/public/favicon.ico), and the generic HTML title in [`packages/renderer/src/index.html`](packages/renderer/src/index.html). Remove the note example once you've used it to understand the wiring.
 
-Before distributing an app, set the identity and release settings you need, including signing and notarization where applicable. The template intentionally does not configure a signing identity, an update server, or automatic updates.
+Before distributing an app, set the identity and release settings you need, including signing and notarization where applicable. The template intentionally does not configure a signing identity, an update server, or automatic updates — see [Releasing](#-releasing-macos-notarization) below for the macOS signing/notarization workflow this template ships with.
 
 ### What is example, what is template
 
@@ -162,28 +163,60 @@ Everything about notes exists to demonstrate the wiring and can be deleted:
 
 The frameless header with custom window controls is also a design choice, not a requirement. If you prefer a native title bar, set `frame: true` in `window.ts` and drop the header component.
 
-Before distributing an app, set the identity and release settings you need, including signing and notarization where applicable. The template intentionally does not configure a signing identity, an update server, or automatic updates.
+## 🚀 Versioning and Release Management
+
+This template ships with the release management workflow. Cutting a release is one manual step; everything after that is automatic:
+
+**Actions tab → [Create Release](../../actions/workflows/create-release.yml) → Run workflow → pick `patch`/`minor`/`major`.**
+
+That workflow ( [`.github/workflows/create-release.yml`](.github/workflows/create-release.yml) ) bumps the version, generates changelog and creates the Github release as draft. Then it explicitely dispatches [`release.yml`](.github/workflows/release.yml) workflow that builds installers for macOS, Windows, and Linux and publishes them to the release.
+
+This release workflow only bumps the root [`package.json`](package.json) version. All `packages/*` versions remain unchanged as internal-only. [`./packages/main/electron-builder.config.js`](./packages/main/electron-builder.config.js) reads the root package version.
+
+Artifacts produced:
+
+| OS      | Installers                                             |
+| ------- | ------------------------------------------------------ |
+| MacOs   | `.dmg` + `.zip`                                        |
+| Windows | `.exe` (NSIS installer + portable),                    |
+| Linux   | `.deb` + `.AppImage` + `.rpm` + `.tar.gz` + `.flatpak` |
+
+The macOS leg additionally signs with a Developer ID Application certificate and notarizes with Apple's `notarytool`, gated on these repository secrets (Settings → Secrets and variables → Actions). Without them the macOS build step fails; Linux and Windows builds don't need them and succeed regardless:
+
+| Secret                       | What it is                                                                                                                                            |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MAC_CERTIFICATE_P12_BASE64` | Your Developer ID Application certificate + key (signs the `.app`/`.dmg`/`.zip`), exported as `.p12`, base64-encoded (`base64 -i cert.p12 \| pbcopy`) |
+| `MAC_CERTIFICATE_PASSWORD`   | The export password for that `.p12`                                                                                                                   |
+| `APPLE_API_KEY_BASE64`       | An App Store Connect API key (`.p8`), base64-encoded                                                                                                  |
+| `APPLE_API_KEY_ID`           | The key ID shown next to that API key in App Store Connect                                                                                            |
+| `APPLE_API_ISSUER`           | Your App Store Connect issuer ID                                                                                                                      |
+
+Notes:
+
+- You need an active [Apple Developer Program](https://developer.apple.com/programs/) membership to create the certificate and API key above. Read more about [macOs Notarization](https://www.electron.build/v26/docs/features/code-signing/notarization/).
+- `electron-builder.json` keeps `mac.notarize: false` so local `npm run package` stays fast and unsigned for smoke-testing installers. `packages/main/package.json`'s `package:release` script overrides that to `true` via `-c.mac.notarize=true` — you don't need to edit the config file.
 
 ## 🛠️ Available Scripts
 
 Run these commands from the repository root:
 
-| Command                | Description                                              |
-| ---------------------- | -------------------------------------------------------- |
-| `npm start`            | Start development mode (Angular + Electron)              |
-| `npm run build`        | Compile all packages (no installers)                     |
-| `npm run package`      | Compile + package into installers (`.dmg`/`.exe`/etc.)   |
-| `npm run clean`        | Clean all build artifacts                                |
-| `npm run lint`         | Lint all packages                                        |
-| `npm run lint:fix`     | Fix linting issues in all packages                       |
-| `npm run format`       | Format code with Prettier                                |
-| `npm run format:check` | Check code formatting                                    |
-| `npm run test`         | Run tests in all packages                                |
-| `npm run typecheck`    | Type-check all packages                                  |
-| `npm run verify`       | Run format:check + lint + typecheck + tests — same as CI |
-| `npm run dev:debug`    | Start development mode with remote debugging (port 9222) |
+| Command                | Description                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| `npm start`            | Start development mode (Angular + Electron)                                                            |
+| `npm run build`        | Compile all packages (no installers)                                                                   |
+| `npm run package`      | Compile + package into installers (`.dmg`/`.exe`/etc.)                                                 |
+| `npm run release`      | Like `package`, plus macOS notarization (used by CI — see [Releasing](#-releasing-macos-notarization)) |
+| `npm run clean`        | Clean all build artifacts                                                                              |
+| `npm run lint`         | Lint all packages                                                                                      |
+| `npm run lint:fix`     | Fix linting issues in all packages                                                                     |
+| `npm run format`       | Format code with Prettier                                                                              |
+| `npm run format:check` | Check code formatting                                                                                  |
+| `npm run test`         | Run tests in all packages                                                                              |
+| `npm run typecheck`    | Type-check all packages                                                                                |
+| `npm run verify`       | Run format:check + lint + typecheck + tests — same as CI                                               |
+| `npm run dev:debug`    | Start development mode with remote debugging (port 9222)                                               |
 
-The CI workflow runs checks and packaging on macOS, Windows, and Linux.
+The CI workflow runs checks and packaging on macOS, Windows, and Linux. The release workflow (tag push) builds and notarizes installers and attaches them to a GitHub Release — see [Releasing](#-releasing-macos-notarization).
 
 ## 🧯 Troubleshooting
 
@@ -215,7 +248,7 @@ Launch Electron with the `packages/main` directory, not the compiled `index.js` 
 
 #### `npm run package` fails on Linux
 
-The default Linux targets include Flatpak, which needs `flatpak`, `flatpak-builder`, and the `org.freedesktop.Platform` 25.08 runtime installed. See the Linux steps in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the exact commands, or remove the `flatpak` target from `packages/main/electron-builder.json` if you don't need it.
+The default Linux targets include Flatpak, which needs `flatpak`, `flatpak-builder`, and the `org.freedesktop.Platform` 25.08 runtime installed. See the Linux steps in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the exact commands, or remove the `flatpak` target from `packages/main/electron-builder.config.js` if you don't need it.
 
 #### Default Electron icon in the macOS Dock during development
 

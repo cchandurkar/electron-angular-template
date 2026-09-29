@@ -201,13 +201,13 @@ export async function applyRebrand(answers, root = ROOT) {
     changed.push('packages/shared/package.json');
   }
 
-  // packages/main/electron-builder.json — productName + a real appId (was deliberately unset)
+  // packages/main/electron-builder.config.js — productName + a real appId (was deliberately unset)
   {
-    const { full, data } = await readJson(root, 'packages/main/electron-builder.json');
+    const { full, data } = await readJson(root, 'packages/main/electron-builder.config.js');
     data.productName = productName;
     const ordered = { appId, ...data };
     await writeJson(full, ordered);
-    changed.push('packages/main/electron-builder.json');
+    changed.push('packages/main/electron-builder.config.js');
   }
 
   // In-app title bar text

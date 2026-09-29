@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build & publish (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup build environment (Node.js, Linux native deps, caches)
+        uses: ./.github/actions/setup-build-env
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Code signing / notarization secrets are scoped to the macOS leg only (via the
+      # runner.os ternary). CSC_LINK is a *shared* electron-builder var also read on Windows;
+      # leaving it unset there prevents a mac .p12 from being fed into Windows Authenticode
+      # signing by mistake. See README > Releasing for what each secret is and how to set it up.
+      #
+      # GH_TOKEN authenticates electron-builder's own GitHub publish step (package:release runs
+      # with --publish always): each OS leg builds its installers and uploads them directly to
+      # the release matching this repo's package.json version — no separate publish job needed.
+      - name: Build & package (release)
+        env:
+          CSC_LINK: ${{ runner.os == 'macOS' && secrets.MAC_CERTIFICATE_P12_BASE64 || '' }}
+          CSC_KEY_PASSWORD: ${{ runner.os == 'macOS' && secrets.MAC_CERTIFICATE_PASSWORD || '' }}
+          APPLE_API_KEY: ${{ runner.os == 'macOS' && secrets.APPLE_API_KEY_BASE64 || '' }}
+          APPLE_API_KEY_ID: ${{ runner.os == 'macOS' && secrets.APPLE_API_KEY_ID || '' }}
+          APPLE_API_ISSUER: ${{ runner.os == 'macOS' && secrets.APPLE_API_ISSUER || '' }}
+          GH_TOKEN: ${{ github.token }}
+        run: npm run release
+
+  finalize:
+    name: Publish release (undraft)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # electron-builder.json intentionally leaves `publish.releaseType` unset, which
+      # electron-builder defaults to "draft" — each of the 3 OS legs above reuses that same
+      # draft and uploads its own assets to it. Only once all 3 have succeeded (this job's
+      # `needs: build`) do we flip it to published, so a release never goes live half-built.
+      - name: Publish the release created by create-release.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release edit "${{ github.ref_name }}" --draft=false --repo "${{ github.repository }}"
