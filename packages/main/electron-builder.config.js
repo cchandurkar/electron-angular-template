@@ -1,7 +1,7 @@
 // Electron-builder config as JS (not JSON) so `extraMetadata.version` can read the version
 // straight from the repo root's package.json at build time.
 
-import { path } from 'node:path';
+import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
