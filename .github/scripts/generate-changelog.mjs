@@ -17,11 +17,11 @@ if (!newVersion || !repoSlug) {
   process.exit(1);
 }
 
-// Safety valve for a degenerate case (e.g. a dormant fork cutting its first release after
-// years of history) — not a normal limit for this manually-triggered release flow, where
-// per-release commit counts are expected to be small. See README > Releasing.
-const MAX_ENTRIES = 150;
+function sh(cmd) {
+  return execSync(cmd, { encoding: 'utf8' }).trim();
+}
 
+const MAX_ENTRIES = 150;
 const TYPES = [
   ['feat', 'Features'],
   ['fix', 'Bug Fixes'],
@@ -29,11 +29,8 @@ const TYPES = [
   ['perf', 'Performance'],
   ['revert', 'Reverts']
 ];
-const typeLabel = new Map(TYPES);
 
-function sh(cmd) {
-  return execSync(cmd, { encoding: 'utf8' }).trim();
-}
+const typeLabel = new Map(TYPES);
 
 let lastTag = '';
 try {
@@ -90,9 +87,23 @@ const compareLink = lastTag
   ? `**Full Changelog**: https://github.com/${repoSlug}/compare/${lastTag}...v${newVersion}`
   : `**Full Changelog**: https://github.com/${repoSlug}/commits/v${newVersion}`;
 
+// Fallback for forks that don't use Conventional Commits: `sections` is only empty here when
+// zero commits matched the type-prefixed pattern above. If commits exist but none matched,
+// list them verbatim instead of silently claiming "no changes" when real work happened.
+let sectionsBody = sections;
+let noteSuffix = truncatedNote;
+if (!sections && subjects.length > 0) {
+  let rawList = subjects;
+  if (rawList.length > MAX_ENTRIES) {
+    noteSuffix = `\n_…and ${rawList.length - MAX_ENTRIES} more change(s) not shown here — see the full changelog link below._\n`;
+    rawList = rawList.slice(0, MAX_ENTRIES);
+  }
+  sectionsBody = `### Changes\n\n${rawList.map(subject => `- ${subject}`).join('\n')}`;
+}
+
 const body =
-  (sections || '_No user-facing changes recorded since the last release._') +
-  truncatedNote +
+  (sectionsBody || '_No user-facing changes recorded since the last release._') +
+  noteSuffix +
   `\n\n${compareLink}\n`;
 
 writeFileSync('CHANGELOG_BODY.md', body);
