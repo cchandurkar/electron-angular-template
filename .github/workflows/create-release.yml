@@ -66,7 +66,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          git add package.json package-lock.json packages/main/package.json packages/renderer/package.json packages/shared/package.json CHANGELOG.md
+          git add package.json package-lock.json packages/main/package.json packages/renderer/package.json packages/shared/package.json
           git commit -m "chore(release): v${VERSION}"
           git tag "v${VERSION}"
           git push origin HEAD:main

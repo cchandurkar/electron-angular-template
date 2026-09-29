@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-// Generates a changelog section for the range between the last git tag (or the start
-// of history, if this is the first release) and HEAD, grouped by conventional-commit
-// type. Prepends the section to CHANGELOG.md and writes the same body to
-// CHANGELOG_BODY.md for use as the GitHub release notes.
+// Generates the GitHub release notes body for the range between the last git tag (or the
+// start of history, if this is the first release) and HEAD, grouped by conventional-commit
+// type. Writes CHANGELOG_BODY.md for use as the release notes — nothing is persisted to the
+// repo (no CHANGELOG.md); the GitHub release itself is the changelog's home.
 //
 // Usage: node generate-changelog.mjs <newVersion> <owner/repo>
 //   newVersion  e.g. "1.2.3" (no leading "v")
 //   owner/repo  e.g. "cchandurkar/electron-angular-template" (for the compare link)
 
 import { execSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 
 const [, , newVersion, repoSlug] = process.argv;
 if (!newVersion || !repoSlug) {
@@ -95,19 +95,8 @@ const body =
   truncatedNote +
   `\n\n${compareLink}\n`;
 
-const date = new Date().toISOString().slice(0, 10);
-const newSection = `## v${newVersion} — ${date}\n\n${body}\n`;
-
-const changelogPath = 'CHANGELOG.md';
-const existing = existsSync(changelogPath)
-  ? readFileSync(changelogPath, 'utf8')
-  : '# Changelog\n\n';
-// Insert the new section right after the top-level "# Changelog" heading, above prior entries.
-const headingEnd = existing.indexOf('\n\n') + 2;
-const updated = existing.slice(0, headingEnd) + newSection + '\n' + existing.slice(headingEnd);
-writeFileSync(changelogPath, updated);
 writeFileSync('CHANGELOG_BODY.md', body);
 
 console.log(
-  `Changelog updated for v${newVersion} (${matchedCount} matched commit(s), lastTag=${lastTag || '<none>'}).`
+  `Release notes generated for v${newVersion} (${matchedCount} matched commit(s), lastTag=${lastTag || '<none>'}).`
 );

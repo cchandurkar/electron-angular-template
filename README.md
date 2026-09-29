@@ -173,7 +173,7 @@ That workflow ([`.github/workflows/create-release.yml`](.github/workflows/create
 
 1. Bumps the version (via `npm version`) in **all 4** `package.json` files (root + `packages/main`, `packages/renderer`, `packages/shared`) so they stay in lockstep — `packages/main`'s is the one that actually matters (electron-builder reads it for the release tag and every artifact filename), the other 3 are cosmetic/internal but kept in sync for consistency.
 2. Refreshes `package-lock.json` (`npm install`).
-3. Generates a changelog from conventional-commit subjects since the last tag (`feat`/`fix`/`refactor`/`perf`/`revert` only — noise like `chore`/`ci`/`docs` is filtered out), prepends it to `CHANGELOG.md`, capped at 150 entries with a "…and N more" note plus a `compare` link if a release window is ever unusually large.
+3. Generates release notes from conventional-commit subjects since the last tag (`feat`/`fix`/`refactor`/`perf`/`revert` only — noise like `chore`/`ci`/`docs` is filtered out), capped at 150 entries with a "…and N more" note plus a `compare` link if a release window is ever unusually large. Nothing is committed to the repo for this — the GitHub release itself is the changelog's home.
 4. Commits, tags `vX.Y.Z`, and pushes both to `main`.
 5. Creates the GitHub release as a **draft** with that changelog as its notes.
 6. Explicitly dispatches [`release.yml`](.github/workflows/release.yml) (`gh workflow run --ref vX.Y.Z`) — required because a push made with the default `GITHUB_TOKEN` doesn't trigger other workflows' `push` events; `workflow_dispatch` is exempt from that rule.
