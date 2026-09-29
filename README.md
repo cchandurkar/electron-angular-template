@@ -86,7 +86,7 @@ packages/
 │   │   ├── storage.ts    userData file storage
 │   │   └── preload/      contextBridge script, bundled to CJS for the sandbox
 │   ├── assets/icons/     App icons for electron-builder
-│   └── electron-builder.json
+│   └── electron-builder.config.js
 ├── renderer/             Angular app (browser sandbox, no Node access)
 │   └── src/app/
 │       ├── components/   Standalone components (note editor, header)
@@ -163,24 +163,23 @@ Everything about notes exists to demonstrate the wiring and can be deleted:
 
 The frameless header with custom window controls is also a design choice, not a requirement. If you prefer a native title bar, set `frame: true` in `window.ts` and drop the header component.
 
-## 🚀 Releasing (macOS notarization)
+## 🚀 Versioning and Release Management
 
-Cutting a release is one manual step; everything after that is automatic:
+This template ships with the release management workflow. Cutting a release is one manual step; everything after that is automatic:
 
 **Actions tab → [Create Release](../../actions/workflows/create-release.yml) → Run workflow → pick `patch`/`minor`/`major`.**
 
-That workflow ([`.github/workflows/create-release.yml`](.github/workflows/create-release.yml)):
+That workflow ( [`.github/workflows/create-release.yml`](.github/workflows/create-release.yml) ) bumps the version, generates changelog and creates the Github release as draft. Then it explicitely dispatches [`release.yml`](.github/workflows/release.yml) workflow that builds installers for macOS, Windows, and Linux and publishes them to the release.
 
-1. Bumps the version (via `npm version`) in **all 4** `package.json` files (root + `packages/main`, `packages/renderer`, `packages/shared`) so they stay in lockstep — `packages/main`'s is the one that actually matters (electron-builder reads it for the release tag and every artifact filename), the other 3 are cosmetic/internal but kept in sync for consistency.
-2. Refreshes `package-lock.json` (`npm install`).
-3. Generates release notes from conventional-commit subjects since the last tag (`feat`/`fix`/`refactor`/`perf`/`revert` only — noise like `chore`/`ci`/`docs` is filtered out), capped at 150 entries with a "…and N more" note plus a `compare` link if a release window is ever unusually large. Nothing is committed to the repo for this — the GitHub release itself is the changelog's home.
-4. Commits, tags `vX.Y.Z`, and pushes both to `main`.
-5. Creates the GitHub release as a **draft** with that changelog as its notes.
-6. Explicitly dispatches [`release.yml`](.github/workflows/release.yml) (`gh workflow run --ref vX.Y.Z`) — required because a push made with the default `GITHUB_TOKEN` doesn't trigger other workflows' `push` events; `workflow_dispatch` is exempt from that rule.
+This release workflow only bumps the root [`package.json`](package.json) version. All `packages/*` versions remain unchanged as internal-only. [`./packages/main/electron-builder.config.js`](./packages/main/electron-builder.config.js) reads the root package version.
 
-[`release.yml`](.github/workflows/release.yml) then builds installers for macOS, Windows, and Linux. Each OS runs `npm run release` (clean + build + `electron-builder --publish always`), which builds its installers **and** uploads them straight to that same draft release — no separate publish/upload job, and no `owner`/`repo` hardcoded (`electron-builder.json`'s `publish.provider: "github"` auto-detects both from the repo's own git remote, so a fork publishes to _its own_ releases with no config edit). Once all 3 OS legs succeed, a final `finalize` job flips the release from draft to published, so a partially-built release is never visible.
+Artifacts produced:
 
-Artifacts produced: macOS `.dmg` + `.zip`, Windows `.exe` (NSIS installer + portable), Linux `.deb` + `.AppImage` + `.rpm` + `.tar.gz` + `.flatpak`.
+| OS      | Installers                                             |
+| ------- | ------------------------------------------------------ |
+| MacOs   | `.dmg` + `.zip`                                        |
+| Windows | `.exe` (NSIS installer + portable),                    |
+| Linux   | `.deb` + `.AppImage` + `.rpm` + `.tar.gz` + `.flatpak` |
 
 The macOS leg additionally signs with a Developer ID Application certificate and notarizes with Apple's `notarytool`, gated on these repository secrets (Settings → Secrets and variables → Actions). Without them the macOS build step fails; Linux and Windows builds don't need them and succeed regardless:
 
@@ -194,13 +193,8 @@ The macOS leg additionally signs with a Developer ID Application certificate and
 
 Notes:
 
-- `create-release.yml` only runs for `github.repository_owner` — anyone else with write access who triggers it fails fast at the guard step. Adjust or remove that check if other collaborators on your fork should be able to cut releases too.
-- You need an active [Apple Developer Program](https://developer.apple.com/programs/) membership to create the certificate and API key above.
+- You need an active [Apple Developer Program](https://developer.apple.com/programs/) membership to create the certificate and API key above. Read more about [macOs Notarization](https://www.electron.build/v26/docs/features/code-signing/notarization/).
 - `electron-builder.json` keeps `mac.notarize: false` so local `npm run package` stays fast and unsigned for smoke-testing installers. `packages/main/package.json`'s `package:release` script overrides that to `true` via `-c.mac.notarize=true` — you don't need to edit the config file.
-- The `rpm` Linux target needs `rpm`/`rpmbuild` on the runner; the shared [`setup-build-env`](.github/actions/setup-build-env/action.yml) composite action installs it alongside the other Linux native deps.
-- Windows and Linux builds are unsigned in this template (no `win.certificateFile`/Authenticode setup) — add that separately if you need it.
-- `GH_TOKEN`/`GITHUB_TOKEN` for the publish step is the workflow's automatic built-in token (`${{ github.token }}`) — no extra secret needed for that part.
-- **This publishes installers to GitHub Releases; it does not make the app auto-update itself.** `electron-builder` generates the `latest.yml`/`latest-mac.yml`/`latest-linux.yml` update-feed metadata these releases need, but nothing in `packages/main` reads it yet — the `updater:status` push channel is still a placeholder (see [Add an IPC Channel](#-add-an-ipc-channel)). Wiring `electron-updater` into the main process to actually check/download/apply updates is tracked as a follow-up, not included yet.
 
 ## 🛠️ Available Scripts
 
@@ -254,7 +248,7 @@ Launch Electron with the `packages/main` directory, not the compiled `index.js` 
 
 #### `npm run package` fails on Linux
 
-The default Linux targets include Flatpak, which needs `flatpak`, `flatpak-builder`, and the `org.freedesktop.Platform` 25.08 runtime installed. See the Linux steps in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the exact commands, or remove the `flatpak` target from `packages/main/electron-builder.json` if you don't need it.
+The default Linux targets include Flatpak, which needs `flatpak`, `flatpak-builder`, and the `org.freedesktop.Platform` 25.08 runtime installed. See the Linux steps in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the exact commands, or remove the `flatpak` target from `packages/main/electron-builder.config.js` if you don't need it.
 
 #### Default Electron icon in the macOS Dock during development
 

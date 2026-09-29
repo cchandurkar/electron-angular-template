@@ -44,18 +44,17 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # All 4 package.json files (root + 3 workspaces) share one version. electron-builder
-      # reads packages/main/package.json specifically — that's the one that actually drives
-      # the release tag and artifact names — but we keep every package.json in lockstep so
-      # there's a single number to reason about across the repo. See README > Releasing.
-      - name: Bump version (root + all workspaces)
+      # Root package.json is the single source of truth for the app version.
+      # packages/main/electron-builder.config.js reads it directly (via `extraMetadata.version`)
+      # at build time, so packages/main, packages/renderer, and packages/shared keep their own
+      # fixed internal version (0.0.1) — nothing reads those for versioning. See README > Releasing.
+      - name: Bump root version
         id: version
         env:
           BUMP: ${{ inputs.bump }}
         run: |
           npm version "$BUMP" --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
-          npm pkg set version="$NEW_VERSION" -w packages/main -w packages/renderer -w packages/shared
           npm install
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -66,7 +65,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          git add package.json package-lock.json packages/main/package.json packages/renderer/package.json packages/shared/package.json
+          git add package.json package-lock.json
           git commit -m "chore(release): v${VERSION}"
           git tag "v${VERSION}"
           git push origin HEAD:main

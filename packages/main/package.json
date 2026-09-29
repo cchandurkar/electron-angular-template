@@ -1,15 +1,15 @@
 {
   "name": "main",
   "productName": "Electron Angular Template",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "description": "A template for building modern Electron apps with Angular",
   "main": "dist/main/index.js",
   "type": "module",
   "scripts": {
     "build": "npm run tsc:build && npm run preload:build",
-    "package": "npm run build && electron-builder --publish never",
-    "package:release": "npm run build && electron-builder --publish always -c.mac.notarize=true",
+    "package": "npm run build && electron-builder --config electron-builder.config.js --publish never",
+    "package:release": "npm run build && electron-builder --config electron-builder.config.js --publish always -c.mac.notarize=true",
     "serve": "wait-on tcp:4200 && npm-run-all --parallel tsc:watch preload:watch electron:launch",
     "electron:launch": "wait-on dist/main/index.js dist/main/preload/index.js && electron . --serve",
     "tsc:watch": "tsc -p tsconfig.json --outDir ./dist/main --watch",
