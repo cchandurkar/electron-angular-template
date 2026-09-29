@@ -52,3 +52,20 @@ jobs:
           APPLE_API_ISSUER: ${{ runner.os == 'macOS' && secrets.APPLE_API_ISSUER || '' }}
           GH_TOKEN: ${{ github.token }}
         run: npm run release
+
+  finalize:
+    name: Publish release (undraft)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # electron-builder.json intentionally leaves `publish.releaseType` unset, which
+      # electron-builder defaults to "draft" — each of the 3 OS legs above reuses that same
+      # draft and uploads its own assets to it. Only once all 3 have succeeded (this job's
+      # `needs: build`) do we flip it to published, so a release never goes live half-built.
+      - name: Publish the release created by create-release.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release edit "${{ github.ref_name }}" --draft=false --repo "${{ github.repository }}"

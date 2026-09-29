@@ -1,0 +1,91 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options: [patch, minor, major]
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  create-release:
+    name: Bump, tag, and kick off release build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Anyone with write access can trigger workflow_dispatch; this adds a second gate
+      # since cutting a release also pushes to main and dispatches the build/publish
+      # pipeline. Adjust or drop if your team wants other collaborators to release too.
+      - name: Guard — owner only
+        if: github.actor != github.repository_owner
+        run: |
+          echo "Only the repository owner (${{ github.repository_owner }}) can trigger releases."
+          exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # All 4 package.json files (root + 3 workspaces) share one version. electron-builder
+      # reads packages/main/package.json specifically — that's the one that actually drives
+      # the release tag and artifact names — but we keep every package.json in lockstep so
+      # there's a single number to reason about across the repo. See README > Releasing.
+      - name: Bump version (root + all workspaces)
+        id: version
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: |
+          npm version "$BUMP" --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          npm pkg set version="$NEW_VERSION" -w packages/main -w packages/renderer -w packages/shared
+          npm install
+          echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Generate changelog
+        run: node .github/scripts/generate-changelog.mjs "${{ steps.version.outputs.version }}" "${{ github.repository }}"
+
+      - name: Commit and tag
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git add package.json package-lock.json packages/main/package.json packages/renderer/package.json packages/shared/package.json CHANGELOG.md
+          git commit -m "chore(release): v${VERSION}"
+          git tag "v${VERSION}"
+          git push origin HEAD:main
+          git push origin "v${VERSION}"
+
+      # Created as a draft: electron-builder's own GitHub publish step (triggered below)
+      # reuses an existing draft release unconditionally and just uploads its assets to it,
+      # so our changelog stays as the notes instead of being overwritten. release.yml's
+      # `finalize` job flips it to published once all 3 OS legs have uploaded successfully.
+      - name: Create draft GitHub release with changelog notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: gh release create "v${VERSION}" --draft --title "v${VERSION}" --notes-file CHANGELOG_BODY.md --repo "${{ github.repository }}"
+
+      # A push made with the default GITHUB_TOKEN does not trigger other workflows' `push`
+      # events (GitHub's anti-recursion rule) — so the tag push above won't start release.yml
+      # on its own. workflow_dispatch is exempt from that rule, so we call it explicitly.
+      - name: Trigger release build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run release.yml --ref "v${{ steps.version.outputs.version }}" --repo "${{ github.repository }}"

@@ -165,16 +165,20 @@ The frameless header with custom window controls is also a design choice, not a 
 
 ## 🚀 Releasing (macOS notarization)
 
-[`.github/workflows/release.yml`](.github/workflows/release.yml) builds installers for macOS, Windows, and Linux and publishes them to a GitHub Release whenever you push a tag matching `v*.*.*`:
+Cutting a release is one manual step; everything after that is automatic:
 
-```bash
-# packages/main/package.json's "version" must match the tag (electron-builder computes the
-# release tag from it, not from the git ref) — bump it first, then tag and push.
-git tag v0.2.0
-git push origin v0.2.0
-```
+**Actions tab → [Create Release](../../actions/workflows/create-release.yml) → Run workflow → pick `patch`/`minor`/`major`.**
 
-Each OS runs `npm run release` (clean + build + `electron-builder --publish always`), which builds its installers **and** publishes them straight to the GitHub Release for that tag — no separate publish/upload job. `electron-builder.json`'s `publish.provider: "github"` doesn't hardcode an `owner`/`repo`; electron-builder auto-detects them from this repo's own git remote, so a fork publishes to _its own_ releases automatically, no config edit needed.
+That workflow ([`.github/workflows/create-release.yml`](.github/workflows/create-release.yml)):
+
+1. Bumps the version (via `npm version`) in **all 4** `package.json` files (root + `packages/main`, `packages/renderer`, `packages/shared`) so they stay in lockstep — `packages/main`'s is the one that actually matters (electron-builder reads it for the release tag and every artifact filename), the other 3 are cosmetic/internal but kept in sync for consistency.
+2. Refreshes `package-lock.json` (`npm install`).
+3. Generates a changelog from conventional-commit subjects since the last tag (`feat`/`fix`/`refactor`/`perf`/`revert` only — noise like `chore`/`ci`/`docs` is filtered out), prepends it to `CHANGELOG.md`, capped at 150 entries with a "…and N more" note plus a `compare` link if a release window is ever unusually large.
+4. Commits, tags `vX.Y.Z`, and pushes both to `main`.
+5. Creates the GitHub release as a **draft** with that changelog as its notes.
+6. Explicitly dispatches [`release.yml`](.github/workflows/release.yml) (`gh workflow run --ref vX.Y.Z`) — required because a push made with the default `GITHUB_TOKEN` doesn't trigger other workflows' `push` events; `workflow_dispatch` is exempt from that rule.
+
+[`release.yml`](.github/workflows/release.yml) then builds installers for macOS, Windows, and Linux. Each OS runs `npm run release` (clean + build + `electron-builder --publish always`), which builds its installers **and** uploads them straight to that same draft release — no separate publish/upload job, and no `owner`/`repo` hardcoded (`electron-builder.json`'s `publish.provider: "github"` auto-detects both from the repo's own git remote, so a fork publishes to _its own_ releases with no config edit). Once all 3 OS legs succeed, a final `finalize` job flips the release from draft to published, so a partially-built release is never visible.
 
 Artifacts produced: macOS `.dmg` + `.zip`, Windows `.exe` (NSIS installer + portable), Linux `.deb` + `.AppImage` + `.rpm` + `.tar.gz` + `.flatpak`.
 
@@ -190,6 +194,7 @@ The macOS leg additionally signs with a Developer ID Application certificate and
 
 Notes:
 
+- `create-release.yml` only runs for `github.repository_owner` — anyone else with write access who triggers it fails fast at the guard step. Adjust or remove that check if other collaborators on your fork should be able to cut releases too.
 - You need an active [Apple Developer Program](https://developer.apple.com/programs/) membership to create the certificate and API key above.
 - `electron-builder.json` keeps `mac.notarize: false` so local `npm run package` stays fast and unsigned for smoke-testing installers. `packages/main/package.json`'s `package:release` script overrides that to `true` via `-c.mac.notarize=true` — you don't need to edit the config file.
 - The `rpm` Linux target needs `rpm`/`rpmbuild` on the runner; the shared [`setup-build-env`](.github/actions/setup-build-env/action.yml) composite action installs it alongside the other Linux native deps.
